@@ -1,0 +1,21 @@
+# Ignorar carpetas de compilación de Java
+**/target/
+**/bin/
+
+# Ignorar configuraciones de IDE (Eclipse/STS/VS Code)
+**/.settings/
+**/.classpath
+**/.project
+**/.factorypath
+.vscode/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales de Spring Boot
+*.log
+*.tmp
+
+.vscode/
+**/.vscode/
