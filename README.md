@@ -1,6 +1,6 @@
 Proyecto MYTHIC GAMES
 
-Proyecto de software dedicado a la venta de videojuegos digitales para PC tipo STEAM, basada en la construccion de 10 microservicios funcionales.
+Proyecto de software dedicado a la venta de videojuegos digitales para PC tipo STEAM, basada en la construcción de 10 microservicios funcionales.
 
 Micro-Servicios
 Mario
