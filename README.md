@@ -34,6 +34,9 @@ BD:MySQL.
 Gestión:Maven.
 
 👥 Colaboradores
+
 Mario Quintero.
+
 Javier.
+
 Matias.
