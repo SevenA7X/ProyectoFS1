@@ -12,16 +12,16 @@ Mario
    
 Javier
 
+4.
 5.
 6.
-7.
 
 Matias
 
+7.
 8.
 9.
 10.
-11.
 
 🌿 Flujo de Trabajo
 1. Crear rama: `git checkout -b feature/nombre-tarea`.
