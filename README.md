@@ -3,19 +3,25 @@ Proyecto MYTHIC GAMES
 Proyecto de software dedicado a la venta de videojuegos digitales para PC tipo STEAM, basada en la construcción de 10 microservicios funcionales.
 
 Micro-Servicios
+
 Mario
+
 1. Catalogo.
 2. Resenas.
 3. Moderación.
+   
 Javier
-4.
+
 5.
 6.
-Matias
 7.
+
+Matias
+
 8.
 9.
 10.
+11.
 
 🌿 Flujo de Trabajo
 1. Crear rama: `git checkout -b feature/nombre-tarea`.
