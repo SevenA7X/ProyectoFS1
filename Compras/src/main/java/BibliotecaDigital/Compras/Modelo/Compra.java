@@ -33,7 +33,7 @@ public class Compra {
     @Column(nullable= false)
     private Long videojuegoID;
 
-    @NotBlank
+    @NotNull
     @Column(nullable= false)
     private LocalDate fechaCompra;
 
