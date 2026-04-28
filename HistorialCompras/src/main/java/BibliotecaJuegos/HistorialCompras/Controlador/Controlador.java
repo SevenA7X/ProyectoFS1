@@ -61,9 +61,9 @@ public class Controlador {
             if (historialComprasExistente != null) {
                 historialComprasExistente.setCompraID(historialID);
                 historialComprasExistente.setUsuarioID(historialCompras.getUsuarioID());
-                historialComprasExistente.setFechaCompra(historialCompras.getFechaCompra());
-                historialComprasExistente.setMontoTotal(historialCompras.getMontoTotal());
-                historialComprasExistente.setEstadoPago(historialCompras.getEstadoPago());
+                historialComprasExistente.setFecha_compra(historialCompras.getFecha_compra());
+                historialComprasExistente.setMonto_Total(historialCompras.getMonto_Total());
+                historialComprasExistente.setEstado_pago(historialCompras.getEstado_pago());
                 HistorialCompras historialComprasActualizado = servicio.save(historialComprasExistente);
                 return ResponseEntity.ok(historialComprasActualizado);
             } else {
