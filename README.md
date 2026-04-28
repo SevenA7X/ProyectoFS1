@@ -12,9 +12,9 @@ Mario
    
 Javier
 
-4.
-5.
-6.
+4. Gestion Usuarios
+5. Estadísticas de Uso
+6. Notificaciones
 
 Matias
 
