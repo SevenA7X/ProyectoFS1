@@ -67,7 +67,7 @@ public class Controlador {
             com.setCompraID(compraID);
             com.setUsuarioID(com.getUsuarioID());
             com.setVideojuegoID(com.getVideojuegoID());
-            com.setFechaCompra(com.getFechaCompra());
+            com.setFecha_compra(com.getFecha_compra());
             com.setEstado_orden(com.getEstado_orden());
             servicio.save(com);
             return ResponseEntity.ok(com);

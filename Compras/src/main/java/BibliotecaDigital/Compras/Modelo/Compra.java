@@ -27,14 +27,14 @@ public class Compra {
     @NotNull
     @Column(nullable= false)
     private Long usuarioID;
-s
+
     @NotNull
     @Column(nullable= false)
     private Long videojuegoID;
 
     @NotNull
     @Column(nullable= false)
-    private LocalDate fechaCompra;
+    private LocalDate fecha_compra;
 
     @NotNull
     @Column(nullable= false)
