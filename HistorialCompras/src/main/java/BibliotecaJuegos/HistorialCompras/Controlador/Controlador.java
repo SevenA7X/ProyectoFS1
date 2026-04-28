@@ -62,7 +62,7 @@ public class Controlador {
                 historialComprasExistente.setCompraID(historialID);
                 historialComprasExistente.setUsuarioID(historialCompras.getUsuarioID());
                 historialComprasExistente.setFecha_compra(historialCompras.getFecha_compra());
-                historialComprasExistente.setMonto_Total(historialCompras.getMonto_Total());
+                historialComprasExistente.setMonto_total(historialCompras.getMonto_total());
                 historialComprasExistente.setEstado_pago(historialCompras.getEstado_pago());
                 HistorialCompras historialComprasActualizado = servicio.save(historialComprasExistente);
                 return ResponseEntity.ok(historialComprasActualizado);
