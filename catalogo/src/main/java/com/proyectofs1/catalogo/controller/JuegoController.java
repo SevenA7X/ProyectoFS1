@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyectofs1.catalogo.model.Juego;
@@ -66,5 +67,36 @@ public class JuegoController {
         juegoService.deleteById(id);
         return ResponseEntity.ok("Juego Eliminado");
     }
+    // http://localhost:8081/api/v1/juegos/buscar?titulo=elden
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Juego>> buscarPorTitulo(@RequestParam String titulo) {
+        List<Juego> resultados = juegoService.buscarPorTitulo(titulo);
+        return ResponseEntity.ok(resultados);
+    }
 
+    // http://localhost:8081/api/v1/juegos/presupuesto?maximo=20000
+    @GetMapping("/presupuesto")
+    public ResponseEntity<List<Juego>> buscarPorPresupuesto(@RequestParam double maximo) {
+        List<Juego> resultados = juegoService.buscarPorPresupuesto(maximo);
+        return ResponseEntity.ok(resultados);
+    }
+
+    // http://localhost:8081/api/v1/juegos/filtro?genero=RPG&maximo=50000
+    @GetMapping("/filtro")
+    public ResponseEntity<List<Juego>> buscarPorFiltros(
+            @RequestParam String genero, 
+            @RequestParam double maximo) {
+        List<Juego> resultados = juegoService.buscarPorGeneroYPresupuesto(genero, maximo);
+        return ResponseEntity.ok(resultados);
+    }
+    // http://localhost:8081/api/v1/juegos/ofertas
+    // Endpoint: GET /api/v1/juegos/ofertas
+    @GetMapping("/ofertas")
+    public ResponseEntity<List<Juego>> obtenerOfertas() {
+        List<Juego> resultados = juegoService.buscarOfertas();
+        if (resultados.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(resultados);
+    }
 }
