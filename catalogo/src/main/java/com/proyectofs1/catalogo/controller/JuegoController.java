@@ -33,7 +33,6 @@ public class JuegoController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(juegos);
-
     }
 
     @PostMapping
@@ -51,6 +50,7 @@ public class JuegoController {
             return  ResponseEntity.notFound().build();
         }
     }
+    
     @PutMapping("/{id}")
     public ResponseEntity<Juego> save(@PathVariable Long id, @Valid @RequestBody Juego juego){
         try {
@@ -67,6 +67,7 @@ public class JuegoController {
         juegoService.deleteById(id);
         return ResponseEntity.ok("Juego Eliminado");
     }
+    
     // http://localhost:8081/api/v1/juegos/buscar?titulo=elden
     @GetMapping("/buscar")
     public ResponseEntity<List<Juego>> buscarPorTitulo(@RequestParam String titulo) {
@@ -81,14 +82,16 @@ public class JuegoController {
         return ResponseEntity.ok(resultados);
     }
 
-    // http://localhost:8081/api/v1/juegos/filtro?genero=RPG&maximo=50000
+    // Actualizado: http://localhost:8081/api/v1/juegos/filtro?categoria=RPG&maximo=50000
     @GetMapping("/filtro")
     public ResponseEntity<List<Juego>> buscarPorFiltros(
-            @RequestParam String genero, 
+            @RequestParam String categoria, 
             @RequestParam double maximo) {
-        List<Juego> resultados = juegoService.buscarPorGeneroYPresupuesto(genero, maximo);
+        // Se mantiene la llamada al método de su servicio, enviando la categoría recibida
+        List<Juego> resultados = juegoService.buscarPorGeneroYPresupuesto(categoria, maximo);
         return ResponseEntity.ok(resultados);
     }
+    
     // http://localhost:8081/api/v1/juegos/ofertas
     // Endpoint: GET /api/v1/juegos/ofertas
     @GetMapping("/ofertas")

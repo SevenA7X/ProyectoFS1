@@ -19,16 +19,24 @@ public class JuegoService {
     public List<Juego> findAll(){
         return juegoRepository.findAll();
     }
+    
     public Juego findById(Long id){
         return juegoRepository.findById(id).get();
     }
+    
     public Juego save(Juego juego){
         return juegoRepository.save(juego);
-    
     }
+    
     public void deleteById(Long id){
         juegoRepository.deleteById(id);
     }
+
+    // Nuevo método: Llama a la búsqueda por nombre de la entidad Categoria
+    public List<Juego> buscarPorCategoria(String nombreCategoria) {
+        return juegoRepository.findByCategoriaNombre(nombreCategoria);
+    }
+
     // Llama a la búsqueda por coincidencia parcial
     public List<Juego> buscarPorTitulo(String titulo) {
         return juegoRepository.findByTituloContainingIgnoreCase(titulo);
@@ -43,6 +51,7 @@ public class JuegoService {
     public List<Juego> buscarPorGeneroYPresupuesto(String genero, double precioMaximo) {
         return juegoRepository.buscarPorGeneroYPrecioMaximo(genero, precioMaximo);
     }
+    
     // Llama a la consulta SQL nativa
     public List<Juego> buscarOfertas() {
         return juegoRepository.buscarTop3OfertasNativo();
