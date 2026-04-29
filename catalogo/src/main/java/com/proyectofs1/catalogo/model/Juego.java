@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -26,17 +28,17 @@ public class Juego {
     @Column(nullable = false)
     private String titulo;
 
-    @Size(max = 50, message = "El Genero no puede exceder los 50 caracteres")
-    @NotBlank(message = "El Genero no puede estar vacio.")
-    @Column(nullable = false)
-    private String genero;
+        // Reemplace el atributo anterior por este bloque
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
     
     @PositiveOrZero(message = "El precio debe ser positivo")
     @Column(nullable = false)
     private double precio;
 
-    @Size(max = 50, message = "La descripcion no puede exceder los 250 caracteres")
-    @NotBlank(message = "El Genero no puede estar vacio.")
+    @Size(max = 250, message = "La descripcion no puede exceder los 250 caracteres")
+    @NotBlank(message = "La descripcion no puede estar vacia.")
     @Column(nullable = false)
     private String descripcion;
 }
