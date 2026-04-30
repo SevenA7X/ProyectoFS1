@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.proyectofs1.catalogo.model.Categoria;
+
+import com.proyectofs1.catalogo.dto.CategoriaDTO; // Importación del DTO
 import com.proyectofs1.catalogo.service.CategoriaService;
 import jakarta.validation.Valid;
 
@@ -17,8 +18,8 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> findAll() {
-        List<Categoria> categorias = categoriaService.findAll();
+    public ResponseEntity<List<CategoriaDTO>> findAll() {
+        List<CategoriaDTO> categorias = categoriaService.findAll();
         if (categorias.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -26,17 +27,18 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> save(@Valid @RequestBody Categoria categoria) {
-        Categoria nuevaCategoria = categoriaService.save(categoria);
+    public ResponseEntity<CategoriaDTO> save(@Valid @RequestBody CategoriaDTO categoriaDTO) {
+        CategoriaDTO nuevaCategoria = categoriaService.save(categoriaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCategoria);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> findById(@PathVariable Long id) {
-        try {
-            Categoria categoria = categoriaService.findById(id);
-            return ResponseEntity.ok(categoria);
-        } catch (Exception e) {
+    public ResponseEntity<CategoriaDTO> findById(@PathVariable Long id) {
+        CategoriaDTO categoriaDTO = categoriaService.findById(id);
+        
+        if (categoriaDTO != null) {
+            return ResponseEntity.ok(categoriaDTO);
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
