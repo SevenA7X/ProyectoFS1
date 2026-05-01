@@ -7,7 +7,7 @@ El desarrollo se enfoca en la estructuración de código bajo el patrón CSR (Co
 
 ## 👥 Integrantes del Equipo
 * **MARIO ANTONIO QUINTERO ALMENDRAS** (SevenA7X)
-* **MATIAS ALFONSO PENA SANCHEZ (DawbroDB) 
+* MATIAS ALFONSO PENA SANCHEZ (DawbroDB) 
 * **JAVIER IGNACIO ASTUDILLO BRITO** (HypershadiX) 
 
 ## ⚙️ Arquitectura y Tecnologías
