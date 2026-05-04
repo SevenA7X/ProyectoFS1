@@ -1,52 +1,102 @@
 package com.proyectofs1.resena.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
-import feign.FeignException; // Importación necesaria para atrapar errores de Feign
+import feign.FeignException;
 
 import com.proyectofs1.resena.model.Resena;
 import com.proyectofs1.resena.repository.ResenaRepository;
-import com.proyectofs1.resena.client.JuegoFeignClient; // Importación de su cliente Feign
-import com.proyectofs1.resena.dto.JuegoValidacionDTO; // Importación de su DTO
+import com.proyectofs1.resena.client.JuegoFeignClient;
+import com.proyectofs1.resena.dto.JuegoValidacionDTO;
+import com.proyectofs1.resena.dto.ResenaDTO;
 
 @Service
 @Transactional
 public class ResenaService {
 
+    private static final Logger log = LoggerFactory.getLogger(ResenaService.class);
+
     @Autowired
     private ResenaRepository resenaRepository;
 
     @Autowired
-    private JuegoFeignClient juegoFeignClient; // Inyección del cliente Feign
+    private JuegoFeignClient juegoFeignClient;
 
-    public List<Resena> findAll() {
-        return resenaRepository.findAll();
+    public List<ResenaDTO> findAll() {
+        log.info("Consultando todas las reseñas en la base de datos.");
+        return resenaRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Resena findById(Long id) {
-        return resenaRepository.findById(id).get();
+    public ResenaDTO findById(Long id) {
+        log.info("Iniciando búsqueda de reseña con ID: {}", id);
+        Optional<Resena> resena = resenaRepository.findById(id);
+        if (resena.isPresent()) {
+            log.info("Reseña con ID: {} encontrada exitosamente.", id);
+            return convertToDTO(resena.get());
+        }
+        log.warn("No se encontró ninguna reseña con el ID: {}", id);
+        return null;
     }
 
-    public Resena save(Resena resena) {
+    public ResenaDTO save(ResenaDTO resenaDTO) {
+        log.info("Iniciando proceso de guardado para reseña del juego ID: {}", resenaDTO.getJuegoId());
+        
         // Validación síncrona mediante OpenFeign antes de persistir los datos
         try {
-            JuegoValidacionDTO juego = juegoFeignClient.obtenerJuegoPorId(resena.getJuegoId());
+            log.info("Validando existencia del juego ID: {} en MS Catálogo", resenaDTO.getJuegoId());
+            JuegoValidacionDTO juego = juegoFeignClient.obtenerJuegoPorId(resenaDTO.getJuegoId());
+            log.info("Validación exitosa. El juego existe.");
         } catch (FeignException.NotFound e) {
-            // Manejo del error 404 si el MS Catálogo no encuentra el ID
-            throw new IllegalArgumentException("No se puede crear la reseña: El videojuego con ID " + resena.getJuegoId() + " no existe en el catálogo.");
+            log.error("Error de validación: El videojuego con ID {} no existe.", resenaDTO.getJuegoId());
+            throw new IllegalArgumentException("No se puede crear la reseña: El videojuego con ID " + resenaDTO.getJuegoId() + " no existe en el catálogo.");
         } catch (FeignException e) {
-            // Manejo de errores de conexión o errores 500 del MS Catálogo
+            log.error("Error de comunicación con MS Catálogo: {}", e.getMessage());
             throw new RuntimeException("Error de comunicación con el servicio de Catálogo: " + e.getMessage());
         }
 
         // Si la ejecución llega a este punto, la validación fue exitosa
-        return resenaRepository.save(resena);
+        Resena resena = convertToEntity(resenaDTO);
+        Resena resenaGuardada = resenaRepository.save(resena);
+        log.info("Reseña guardada exitosamente con ID asignado: {}", resenaGuardada.getId());
+        return convertToDTO(resenaGuardada);
     }
 
     public void deleteById(Long id) {
+        log.info("Ejecutando eliminación de la reseña con ID: {}", id);
         resenaRepository.deleteById(id);
+        log.info("Reseña con ID: {} eliminada correctamente.", id);
+    }
+
+    // --- Métodos de Conversión ---
+
+    private ResenaDTO convertToDTO(Resena resena) {
+        ResenaDTO dto = new ResenaDTO();
+        dto.setId(resena.getId());
+        dto.setUsuarioId(resena.getUsuarioId());
+        dto.setJuegoId(resena.getJuegoId());
+        dto.setComentario(resena.getComentario());
+        dto.setPuntuacion(resena.getPuntuacion());
+        dto.setEstado(resena.getEstado());
+        return dto;
+    }
+
+    private Resena convertToEntity(ResenaDTO dto) {
+        Resena resena = new Resena();
+        resena.setId(dto.getId());
+        resena.setUsuarioId(dto.getUsuarioId());
+        resena.setJuegoId(dto.getJuegoId());
+        resena.setComentario(dto.getComentario());
+        resena.setPuntuacion(dto.getPuntuacion());
+        resena.setEstado(dto.getEstado());
+        return resena;
     }
 }

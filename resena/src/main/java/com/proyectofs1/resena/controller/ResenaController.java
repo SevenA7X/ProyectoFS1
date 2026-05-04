@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import com.proyectofs1.resena.model.Resena;
+import com.proyectofs1.resena.dto.ResenaDTO;
 import com.proyectofs1.resena.service.ResenaService;
 
 @RestController
@@ -19,8 +19,8 @@ public class ResenaController {
     private ResenaService resenaService;
 
     @GetMapping
-    public ResponseEntity<List<Resena>> findAll() {
-        List<Resena> resenas = resenaService.findAll();
+    public ResponseEntity<List<ResenaDTO>> findAll() {
+        List<ResenaDTO> resenas = resenaService.findAll();
         if (resenas.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -28,35 +28,41 @@ public class ResenaController {
     }
 
     @PostMapping
-    public ResponseEntity<Resena> save(@Valid @RequestBody Resena resena) {
-        Resena resenaNueva = resenaService.save(resena);
+    public ResponseEntity<ResenaDTO> save(@Valid @RequestBody ResenaDTO resenaDTO) {
+        ResenaDTO resenaNueva = resenaService.save(resenaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(resenaNueva);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resena> findById(@PathVariable Long id) {
-        try {
-            Resena resena = resenaService.findById(id);
+    public ResponseEntity<ResenaDTO> findById(@PathVariable Long id) {
+        ResenaDTO resena = resenaService.findById(id);
+        if (resena != null) {
             return ResponseEntity.ok(resena);
-        } catch (Exception e) {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Resena> save(@PathVariable Long id, @Valid @RequestBody Resena resena){
-        try {
+    public ResponseEntity<ResenaDTO> update(@PathVariable Long id, @Valid @RequestBody ResenaDTO resenaDTO){
+        ResenaDTO resenaExistente = resenaService.findById(id);
+        if (resenaExistente != null) {
             // Asignación crucial para garantizar que se actualice el registro correcto
-            resena.setId(id); 
-            return ResponseEntity.ok(resenaService.save(resena));
-        } catch (Exception e){
+            resenaDTO.setId(id); 
+            return ResponseEntity.ok(resenaService.save(resenaDTO));
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> borrar(@PathVariable Long id){
-        resenaService.deleteById(id);
-        return ResponseEntity.ok("Reseña Eliminada");
+        ResenaDTO resenaExistente = resenaService.findById(id);
+        if (resenaExistente != null) {
+            resenaService.deleteById(id);
+            return ResponseEntity.ok("Reseña Eliminada");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
