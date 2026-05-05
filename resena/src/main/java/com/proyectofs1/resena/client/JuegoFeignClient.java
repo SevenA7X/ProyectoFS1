@@ -13,3 +13,4 @@ public interface JuegoFeignClient {
     @GetMapping("/{id}")
     JuegoValidacionDTO obtenerJuegoPorId(@PathVariable("id") Long id);
 }
+
