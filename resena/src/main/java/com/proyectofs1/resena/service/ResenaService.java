@@ -1,8 +1,6 @@
 package com.proyectofs1.resena.service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,54 +31,67 @@ public class ResenaService {
         log.info("Consultando todas las reseñas en la base de datos.");
         return resenaRepository.findAll().stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public ResenaDTO findById(Long id) {
         log.info("Iniciando búsqueda de reseña con ID: {}", id);
-        Optional<Resena> resena = resenaRepository.findById(id);
-        if (resena.isPresent()) {
-            log.info("Reseña con ID: {} encontrada exitosamente.", id);
-            return convertToDTO(resena.get());
-        }
-        log.warn("No se encontró ninguna reseña con el ID: {}", id);
-        return null;
+        return resenaRepository.findById(id)
+                .map(resena -> {
+                    log.info("Reseña con ID: {} encontrada exitosamente.", id);
+                    return convertToDTO(resena);
+                })
+                .orElseThrow(() -> {
+                    log.warn("No se encontró ninguna reseña con el ID: {}", id);
+                    return new IllegalArgumentException("Reseña no encontrada con el ID: " + id);
+                });
     }
 
     public ResenaDTO save(ResenaDTO resenaDTO) {
         log.info("Iniciando proceso de guardado para reseña del juego ID: {}", resenaDTO.getJuegoId());
         
-        // Validación síncrona mediante OpenFeign antes de persistir los datos
         try {
             log.info("Validando existencia del juego ID: {} en MS Catálogo", resenaDTO.getJuegoId());
             JuegoValidacionDTO juego = juegoFeignClient.obtenerJuegoPorId(resenaDTO.getJuegoId());
             log.info("Validación exitosa. El juego existe.");
         } catch (FeignException.NotFound e) {
             log.error("Error de validación: El videojuego con ID {} no existe.", resenaDTO.getJuegoId());
-            throw new IllegalArgumentException("No se puede crear la reseña: El videojuego con ID " + resenaDTO.getJuegoId() + " no existe en el catálogo.");
+            throw new IllegalArgumentException("No se puede crear la reseña: El videojuego no existe en el catálogo.");
         } catch (FeignException e) {
             log.error("Error de comunicación con MS Catálogo: {}", e.getMessage());
             throw new RuntimeException("Error de comunicación con el servicio de Catálogo: " + e.getMessage());
         }
 
-        // Si la ejecución llega a este punto, la validación fue exitosa
         Resena resena = convertToEntity(resenaDTO);
         Resena resenaGuardada = resenaRepository.save(resena);
         log.info("Reseña guardada exitosamente con ID asignado: {}", resenaGuardada.getId());
         return convertToDTO(resenaGuardada);
     }
 
-    public void deleteById(Long id) {
-    log.info("Ejecutando eliminación de la reseña con ID: {}", id);
-    if (!resenaRepository.existsById(id)) {
-        log.warn("Fallo al eliminar: No existe reseña con ID {}", id);
-        throw new IllegalArgumentException("No se encontró la reseña a eliminar.");
-    }
-    resenaRepository.deleteById(id);
-    log.info("Reseña con ID: {} eliminada correctamente.", id);
-}
+    public ResenaDTO update(Long id, ResenaDTO resenaDTO) {
+        log.info("Iniciando actualización lógica de la reseña ID: {}", id);
 
-    // --- Métodos de Conversión ---
+        Resena resenaExistente = resenaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No se puede actualizar: La reseña con ID " + id + " no existe."));
+
+        resenaExistente.setComentario(resenaDTO.getComentario());
+        resenaExistente.setPuntuacion(resenaDTO.getPuntuacion());
+        resenaExistente.setEstado(resenaDTO.getEstado());
+
+        Resena resenaActualizada = resenaRepository.save(resenaExistente);
+        log.info("Reseña ID: {} actualizada con éxito en la base de datos.", id);
+        return convertToDTO(resenaActualizada);
+    }
+
+    public void deleteById(Long id) {
+        log.info("Ejecutando eliminación de la reseña con ID: {}", id);
+        if (!resenaRepository.existsById(id)) {
+            log.warn("Fallo al eliminar: No existe reseña con ID {}", id);
+            throw new IllegalArgumentException("No se encontró la reseña a eliminar.");
+        }
+        resenaRepository.deleteById(id);
+        log.info("Reseña con ID: {} eliminada correctamente.", id);
+    }
 
     private ResenaDTO convertToDTO(Resena resena) {
         ResenaDTO dto = new ResenaDTO();
