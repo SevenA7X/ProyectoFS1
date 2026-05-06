@@ -68,7 +68,7 @@ INSERT INTO resena (usuario_id, juego_id, comentario, puntuacion, estado) VALUES
 INSERT INTO resena (usuario_id, juego_id, comentario, puntuacion, estado) VALUES (101, 14, 'El sistema de apuntado es más fluido y el cuchillo añade una nueva capa táctica.', 4, 'APROBADO');
 INSERT INTO resena (usuario_id, juego_id, comentario, puntuacion, estado) VALUES (102, 14, 'Algunos recortes respecto al original me decepcionaron un poco.', 3, 'PENDIENTE');
 
--- Reseñas para Age of Empires II (ID 15)
+-- Reseñas para Age of Empires II (IDD 15)
 INSERT INTO resena (usuario_id, juego_id, comentario, puntuacion, estado) VALUES (103, 15, 'El clásico de estrategia que nunca envejece. La versión definitiva es fantástica.', 5, 'APROBADO');
 INSERT INTO resena (usuario_id, juego_id, comentario, puntuacion, estado) VALUES (104, 15, 'Excelente variedad de civilizaciones y campañas históricas muy bien documentadas.', 5, 'APROBADO');
 INSERT INTO resena (usuario_id, juego_id, comentario, puntuacion, estado) VALUES (105, 15, 'La curva de aprendizaje para el multijugador es altísima, pero vale la pena.', 4, 'APROBADO');
