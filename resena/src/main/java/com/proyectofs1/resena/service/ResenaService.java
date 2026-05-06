@@ -71,10 +71,14 @@ public class ResenaService {
     }
 
     public void deleteById(Long id) {
-        log.info("Ejecutando eliminación de la reseña con ID: {}", id);
-        resenaRepository.deleteById(id);
-        log.info("Reseña con ID: {} eliminada correctamente.", id);
+    log.info("Ejecutando eliminación de la reseña con ID: {}", id);
+    if (!resenaRepository.existsById(id)) {
+        log.warn("Fallo al eliminar: No existe reseña con ID {}", id);
+        throw new IllegalArgumentException("No se encontró la reseña a eliminar.");
     }
+    resenaRepository.deleteById(id);
+    log.info("Reseña con ID: {} eliminada correctamente.", id);
+}
 
     // --- Métodos de Conversión ---
 
