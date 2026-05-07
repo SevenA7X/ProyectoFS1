@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "LICENCIAS")
+@Table(name = "db_licencias")
 @Entity
 
 public class Licencia{
