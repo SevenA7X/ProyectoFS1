@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name= "COMPRAS")
+@Table(name= "db_compras")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Compra {
@@ -33,9 +32,9 @@ public class Compra {
     @Column(nullable= false)
     private Long videojuegoID;
 
-    @NotBlank
+    @NotNull
     @Column(nullable= false)
-    private LocalDate fechaCompra;
+    private LocalDate fecha_compra;
 
     @NotNull
     @Column(nullable= false)
