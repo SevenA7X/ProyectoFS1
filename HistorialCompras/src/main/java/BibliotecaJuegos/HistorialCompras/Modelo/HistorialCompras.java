@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "HISTORIALCOMPRAS")
+@Table(name = "db_historialcompras")
 @Entity
 
 public class HistorialCompras {
@@ -34,16 +34,16 @@ public class HistorialCompras {
     @NotNull
     private Long usuarioID;
 
-    @Column(name = "fechaCompra", nullable = false)
+    @Column(name = "fecha_compra", nullable = false)
     @NotNull
-    private LocalDate fechaCompra;
+    private LocalDate fecha_compra;
 
 
-    @Column(name = "montoTotal", nullable = false)
+    @Column(name = "monto_total", nullable = false)
     @NotNull
-    private Double montoTotal;
+    private Double monto_total;
 
     @NotBlank
     @Column(nullable=false)
-    private String estadoPago;
+    private String estado_pago;
 }
