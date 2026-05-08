@@ -23,29 +23,29 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "db_pagos")
 public class Pagos {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pagoID;
 
-    @NotNull
+    @NotNull(message = "El ID de la compra es obligatorio")
     @Column(nullable=false)
     private Long compraID;
 
-    @Positive
-    @NotNull
+    @Positive(message = "El monto debe ser un valor positivo")
+    @NotNull(message = "El monto total no puede ser nulo")
     @Column(nullable=false)
     private Double monto_total;
 
-    @NotBlank
+    @NotBlank(message = "Debe especificar un método de pago")
     @Column(nullable=false)
     private String metodo_pago;
 
-    @NotBlank
+    @NotBlank(message = "El estado del pago es obligatorio")
     @Column(nullable=false)
     private String estado_pago;
 
-    @NotNull
+    @NotNull(message = "La fecha es obligatoria")
     @Column(nullable=false)
     private LocalDate fecha;
 }
+
