@@ -46,7 +46,7 @@ public class Controlador {
     }
 
     @PostMapping
-    public ResponseEntity<Compra> agregarCompra(@RequestBody Compra compra){
+    public ResponseEntity<Compra> agregarCompra(@Valid @RequestBody Compra compra){
         try {
             Compra com = servicio.save(compra);
             return ResponseEntity.status(HttpStatus.CREATED).body(com);

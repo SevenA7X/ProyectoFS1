@@ -8,7 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,19 +26,20 @@ public class Compra {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long compraID;
     
-    @NotNull
+    @NotNull(message = "El ID de usuario es obligatorio")
     @Column(nullable= false)
     private Long usuarioID;
 
-    @NotNull
+    @NotNull(message = "El ID del videojuego es obligatorio")
     @Column(nullable= false)
     private Long videojuegoID;
 
-    @NotNull
+    @NotNull(message = "La fecha de compra no puede ser nula")
+    @PastOrPresent(message = "La fecha de compra no puede ser futura") 
     @Column(nullable= false)
     private LocalDate fecha_compra;
 
-    @NotNull
+    @NotBlank(message = "El estado de la orden no puede estar vacío")
     @Column(nullable= false)
     private String estado_orden;
 }
