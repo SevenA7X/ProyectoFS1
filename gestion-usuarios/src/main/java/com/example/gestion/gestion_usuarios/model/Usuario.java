@@ -1,36 +1,29 @@
 package com.example.gestion.gestion_usuarios.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Table(name = "usuario")
-@Data
-@NoArgsConstructor
+@Table(name = "usuarios")
+@Getter
+@Setter 
+@NoArgsConstructor 
 @AllArgsConstructor
-
 public class Usuario {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(message = "La id ingresada no es válida, intente nuevamente")
-    private Integer id;
+    private Long id;
 
-    @NotBlank(message = "El nombre no puede estar vacío")
-    @Column(unique=false)
-    private String nombre;
+    @Column(nullable = false, unique = true)
+    private String nombreUsuario;
 
-    @NotBlank(message = "El rol no puede estar vacío")
-    @Column(unique=false)
-    private String rol;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    @NotBlank(message = "Las credenciales no pueden estar vacías")
-    @Column(unique=false)
-    private String credenciales;
-    
+    @Column(nullable = false)
+    private String password;
 
+    @Column(nullable = false)
+    private String rol; // ADMIN, CLIENTE, MODERADOR
 }

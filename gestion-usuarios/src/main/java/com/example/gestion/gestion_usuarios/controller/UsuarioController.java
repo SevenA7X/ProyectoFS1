@@ -1,75 +1,41 @@
 package com.example.gestion.gestion_usuarios.controller;
 
-import com.example.gestion.gestion_usuarios.model.Usuario;
+import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.service.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/usuarios")
-
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
+    private final UsuarioService service;
 
-    @Autowired
-    private UsuarioService usuarioService;
+    public UsuarioController(UsuarioService service) { this.service = service; }
 
-    @GetMapping
-    public ResponseEntity<List<Usuario>> listar(){
-        List<Usuario> usuarios = usuarioService.buscarTodo();
-        if (usuarios.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(usuarios);
+    @GetMapping // Obtener todos
+    public List<UsuarioDTO> listar() { return service.obtenerTodos(); }
+
+    @GetMapping("/{id}") // Obtener uno por ID
+    public ResponseEntity<UsuarioDTO> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Usuario> guardar(@RequestBody Usuario usuario){
-        Usuario nuevoUsuario = usuarioService.guardarUsuario(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+    @PostMapping // Crear (IE 2.2.1 Reglas de negocio)
+    public ResponseEntity<UsuarioDTO> crear(@Valid @RequestBody UsuarioDTO dto) {
+        return new ResponseEntity<>(service.crear(dto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscar(@PathVariable Integer id){
-        try {
-            Usuario usuario = usuarioService.buscarPorId(id);
-            return ResponseEntity.ok(usuario);
-
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-
-            
-        }
+    @PutMapping("/{id}") // Actualizar
+    public ResponseEntity<UsuarioDTO> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioDTO dto) {
+        return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
-    @PutMapping("/{id)")
-    public ResponseEntity<Usuario> actualizar(@PathVariable Integer id, @RequestBody Usuario usuario){
-        try {
-            Usuario user = usuarioService.buscarPorId(id);
-            user.setId(id);
-            user.setNombre(usuario.getNombre());
-            user.setRol(usuario.getRol());
-            user.setCredenciales(usuario.getCredenciales());
-
-            usuarioService.guardarUsuario(user);
-            return ResponseEntity.ok(usuario);
-        } catch ( Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @DeleteMapping("/{id}") // Eliminar
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id){
-        try {
-            usuarioService.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
 }
