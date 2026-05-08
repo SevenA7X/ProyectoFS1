@@ -43,3 +43,6 @@ Cada microservicio requiere su propia base de datos normalizada. Abra su cliente
 ```sql
 CREATE DATABASE catalogo_db;
 CREATE DATABASE resena_db;
+CREATE DATABASE gestion_usuarios_db;
+CREATE DATABASE estadisticas_uso_db;
+CREATE DATABASE notificaciones_db;
