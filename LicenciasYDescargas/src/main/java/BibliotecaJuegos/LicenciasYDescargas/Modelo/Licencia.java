@@ -1,4 +1,4 @@
-package BibliotecaJuegos.LicenciasYDescargas.Modelo;
+package BibliotecaJuegos.LicenciasYDescargas.modelo;
 
 
 

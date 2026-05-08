@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaDigital.pagos.modelo.Pagos;
-import BibliotecaDigital.Pagos.Servicio.Servicio;
+import BibliotecaDigital.Pagos.modelo.Pagos;
+import BibliotecaDigital.Pagos.servicio.Servicio;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/pagos")
 public class Controlador {
     @Autowired
-    private servicio servicio;
+    private Servicio servicio;
 
     @GetMapping
     public ResponseEntity<List<Pagos>> listarPagos(){
@@ -45,7 +45,7 @@ public class Controlador {
     }
 
     @PostMapping
-    public ResponseEntity<Pagos> guardarPago(@RequestBody Pagos pagos){
+    public ResponseEntity<Pagos> guardarPago(@Valid @RequestBody Pagos pagos){
         try {
             Pagos nuevoPago = servicio.guardarPago(pagos);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPago);
