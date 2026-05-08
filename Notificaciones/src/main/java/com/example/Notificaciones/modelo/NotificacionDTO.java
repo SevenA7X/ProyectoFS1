@@ -17,7 +17,9 @@ public class NotificacionDTO {
     @NotNull(message = "El Id del usuario no es válido") 
     private Long usuarioId;
 
-    @NotBlank(message = "El mensaje no puede estar vacío") private String mensaje;
+    @NotBlank(message = "El mensaje no puede estar vacío") 
+    private String mensaje;
+    
     private String tipo;
 
 }
