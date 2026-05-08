@@ -1,4 +1,4 @@
-package BibliotecaDigital.Pagos.Servicio;
+package BibliotecaDigital.Pagos.servicio;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class Servicio{
     @Autowired
-    private Repositorio repositorio;
+    private repositorio repositorio;
 
     public List<Pagos> listarPagos() {
         return repositorio.findAll();
