@@ -45,7 +45,7 @@ public class Controlador {
     }
 
     @PostMapping
-    public ResponseEntity<HistorialCompras> agregarHistorialCompras(@RequestBody HistorialCompras historialCompras){
+    public ResponseEntity<HistorialCompras> agregarHistorialCompras(@Valid @RequestBody HistorialCompras historialCompras){
         try {
             HistorialCompras nuevoHistorialCompras = servicio.save(historialCompras);
             return ResponseEntity.ok(nuevoHistorialCompras);
