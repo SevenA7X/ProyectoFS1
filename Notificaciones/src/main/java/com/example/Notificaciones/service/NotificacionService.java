@@ -1,19 +1,18 @@
 package com.example.Notificaciones.service;
 
-import com.biblioteca.notificacion.model.Notificacion;
-import com.biblioteca.notificacion.model.dto.NotificacionRequestDTO;
+import com.example.Notificaciones.modelo.NotificacionDTO;
+import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.ArrayList;
 
-public interface NotificacionService {
-    
-    Notificacion crearNotificacion(NotificacionRequestDTO request);
-    List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId);
-    List<Notificacion> obtenerNotificacionesNoLeidas(Long usuarioId);
-    Notificacion marcarComoLeida(Long notificacionId);
-    void marcarTodasComoLeidas(Long usuarioId);
-    void eliminarNotificacion(Long id);
-    long contarNoLeidas(Long usuarioId);
-    void enviarNotificacionCompraExitosa(Long usuarioId, String juegoNombre);
-    void enviarNotificacionLicenciaActivada(Long usuarioId, String juegoNombre);
-    void enviarNotificacionResenaModerada(Long usuarioId, String juegoNombre, boolean aceptada);
+@Service
+public class NotificacionService {
+
+    public void procesarNotificacion(NotificacionDTO dto) {
+        System.out.println("Enviando notificación para el usuario: " + dto.getUsuarioId());
+    }
+
+    public List<NotificacionDTO> obtenerPorUsuario(Long usuarioId) {
+        return new ArrayList<>(); 
+    }
 }
