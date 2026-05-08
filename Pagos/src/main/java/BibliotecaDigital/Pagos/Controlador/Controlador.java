@@ -45,7 +45,7 @@ public class Controlador {
     }
 
     @PostMapping
-    public ResponseEntity<Pagos> guardarPago(@RequestBody Pagos pagos){
+    public ResponseEntity<Pagos> guardarPago(@Valid @RequestBody Pagos pagos){
         try {
             Pagos nuevoPago = servicio.guardarPago(pagos);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPago);
