@@ -1,4 +1,4 @@
-package BibliotecaDigital.Pagos.Controlador;
+package BibliotecaDigital.Pagos.controlador;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaDigital.Pagos.Modelo.Pagos;
+import BibliotecaDigital.pagos.modelo.Pagos;
 import BibliotecaDigital.Pagos.Servicio.Servicio;
 import jakarta.validation.Valid;
 
@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/pagos")
 public class Controlador {
     @Autowired
-    private Servicio servicio;
+    private servicio servicio;
 
     @GetMapping
     public ResponseEntity<List<Pagos>> listarPagos(){
@@ -65,7 +65,7 @@ public class Controlador {
             pagoExistente.setCompraID(pagos.getCompraID());
             pagoExistente.setMonto_total(pagos.getMonto_total());
             pagoExistente.setMetodo_pago(pagos.getMetodo_pago());
-            pagoExistente.setEstado_pago(pagos.getEstado_pago());s
+            pagoExistente.setEstado_pago(pagos.getEstado_pago());
 
             Pagos pagoActualizado = servicio.guardarPago(pagoExistente);
             return ResponseEntity.ok(pagoActualizado);

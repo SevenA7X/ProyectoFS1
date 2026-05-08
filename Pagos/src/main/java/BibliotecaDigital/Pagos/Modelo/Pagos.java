@@ -41,7 +41,7 @@ public class Pagos {
     @Column(nullable=false)
     private String metodo_pago;
 
-    @NotBlanks
+    @NotBlank
     @Column(nullable=false)
     private String estado_pago;
 

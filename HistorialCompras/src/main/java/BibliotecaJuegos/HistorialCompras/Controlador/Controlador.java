@@ -1,4 +1,4 @@
-package BibliotecaJuegos.HistorialCompras.Controlador;
+package BibliotecaJuegos.HistorialCompras.controlador;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaJuegos.HistorialCompras.Modelo.HistorialCompras;
-import BibliotecaJuegos.HistorialCompras.Servicio.Servicio;
+import BibliotecaJuegos.HistorialCompras.modelo.HistorialCompras;
+import BibliotecaJuegos.HistorialCompras.servicio.Servicio;
 import jakarta.validation.Valid;
 
 
