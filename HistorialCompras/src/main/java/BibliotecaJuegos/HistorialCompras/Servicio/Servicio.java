@@ -1,12 +1,12 @@
-package BibliotecaJuegos.HistorialCompras.servicio;
+package BibliotecaJuegos.HistorialCompras.Servicio;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import BibliotecaJuegos.HistorialCompras.modelo.HistorialCompras;
-import BibliotecaJuegos.HistorialCompras.repositorio.Repositorio;
+import BibliotecaJuegos.HistorialCompras.Modelo.HistorialCompras;
+import BibliotecaJuegos.HistorialCompras.Repositorio.Repositorio;
 import jakarta.transaction.Transactional;
 
 

@@ -1,12 +1,12 @@
-package BibliotecaDigital.Pagos.servicio;
+package BibliotecaDigital.Pagos.Servicio;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import BibliotecaDigital.Pagos.modelo.Pagos;
-import BibliotecaDigital.Pagos.repositorio.Repositorio;
+import BibliotecaDigital.Pagos.Modelo.Pagos;
+import BibliotecaDigital.Pagos.Repositorio.Repositorio;
 import jakarta.transaction.Transactional;
 @Service
 @Transactional

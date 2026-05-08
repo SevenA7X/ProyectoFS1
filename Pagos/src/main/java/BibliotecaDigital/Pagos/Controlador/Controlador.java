@@ -1,4 +1,4 @@
-package BibliotecaDigital.Pagos.controlador;
+package BibliotecaDigital.Pagos.Controlador;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaDigital.Pagos.modelo.Pagos;
-import BibliotecaDigital.Pagos.servicio.Servicio;
+import BibliotecaDigital.Pagos.Modelo.Pagos;
+import BibliotecaDigital.Pagos.Servicio.Servicio;
 import jakarta.validation.Valid;
 
 @RestController

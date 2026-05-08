@@ -1,4 +1,4 @@
-package BibliotecaJuegos.HistorialCompras.modelo;
+package BibliotecaJuegos.HistorialCompras.Modelo;
 
 import java.time.LocalDate;
 

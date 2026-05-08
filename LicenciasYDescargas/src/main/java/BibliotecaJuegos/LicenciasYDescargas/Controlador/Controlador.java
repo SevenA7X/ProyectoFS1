@@ -1,4 +1,4 @@
-package BibliotecaJuegos.LicenciasYDescargas.controlador;
+package BibliotecaJuegos.LicenciasYDescargas.Controlador;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaJuegos.LicenciasYDescargas.modelo.Licencia;
-import BibliotecaJuegos.LicenciasYDescargas.servicio.Servicio;
+import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
+import BibliotecaJuegos.LicenciasYDescargas.Servicio.Servicio;
 import jakarta.validation.Valid;
 
 @RestController

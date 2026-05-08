@@ -1,12 +1,12 @@
-package BibliotecaJuegos.LicenciasYDescargas.servicio;
+package BibliotecaJuegos.LicenciasYDescargas.Servicio;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import BibliotecaJuegos.LicenciasYDescargas.modelo.Licencia;
-import BibliotecaJuegos.LicenciasYDescargas.repositorio.Repositorio;
+import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
+import BibliotecaJuegos.LicenciasYDescargas.Repositorio.Repositorio;
 import jakarta.transaction.Transactional;
 
 @Service

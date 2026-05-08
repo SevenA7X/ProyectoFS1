@@ -1,4 +1,4 @@
-package BibliotecaDigital.Pagos.modelo;
+package BibliotecaDigital.Pagos.Modelo;
 
 import java.time.LocalDate;
 

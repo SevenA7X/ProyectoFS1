@@ -1,4 +1,4 @@
-package BibliotecaDigital.Compras.controlador;
+package BibliotecaDigital.Compras.Controlador;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import BibliotecaDigital.Compras.modelo.Compra;
-import BibliotecaDigital.Compras.servicio.Servicio;
+import BibliotecaDigital.Compras.Modelo.Compra;
+import BibliotecaDigital.Compras.Servicio.Servicio;
 import jakarta.validation.Valid;
 
 @RestController

@@ -1,12 +1,12 @@
-package BibliotecaDigital.Compras.servicio;
+package BibliotecaDigital.Compras.Servicio;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import BibliotecaDigital.Compras.modelo.Compra;
-import BibliotecaDigital.Compras.repositorio.Repositorio;
+import BibliotecaDigital.Compras.Modelo.Compra;
+import BibliotecaDigital.Compras.Repositorio.Repositorio;
 import jakarta.transaction.Transactional;
 
 @Service
