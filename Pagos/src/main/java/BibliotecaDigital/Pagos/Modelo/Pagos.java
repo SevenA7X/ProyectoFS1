@@ -35,15 +35,15 @@ public class Pagos {
     @Positive
     @NotNull
     @Column(nullable=false)
-    private Double montoTotal;
+    private Double monto_total;
 
     @NotBlank
     @Column(nullable=false)
-    private String metodoPago;
+    private String metodo_pago;
 
-    @NotBlank
+    @NotBlanks
     @Column(nullable=false)
-    private String estadoPago;
+    private String estado_pago;
 
     @NotNull
     @Column(nullable=false)

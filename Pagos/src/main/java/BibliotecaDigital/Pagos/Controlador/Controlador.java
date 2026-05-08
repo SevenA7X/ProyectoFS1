@@ -63,9 +63,9 @@ public class Controlador {
             }
             pagoExistente.setPagoID(pagoID);
             pagoExistente.setCompraID(pagos.getCompraID());
-            pagoExistente.setMontoTotal(pagos.getMontoTotal());
-            pagoExistente.setMetodoPago(pagos.getMetodoPago());
-            pagoExistente.setEstadoPago(pagos.getEstadoPago());
+            pagoExistente.setMonto_total(pagos.getMonto_total());
+            pagoExistente.setMetodo_pago(pagos.getMetodo_pago());
+            pagoExistente.setEstado_pago(pagos.getEstado_pago());s
 
             Pagos pagoActualizado = servicio.guardarPago(pagoExistente);
             return ResponseEntity.ok(pagoActualizado);
