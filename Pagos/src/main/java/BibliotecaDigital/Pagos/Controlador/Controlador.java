@@ -1,87 +1,56 @@
 package BibliotecaDigital.Pagos.Controlador;
 
-import java.util.List;
-
+import BibliotecaDigital.Pagos.dto.PagosDTO;
+import BibliotecaDigital.Pagos.Servicio.Servicio;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import BibliotecaDigital.Pagos.Modelo.Pagos;
-import BibliotecaDigital.Pagos.Servicio.Servicio;
-import jakarta.validation.Valid;
+import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/v1/pagos")
+@RequestMapping("/api/v1/pagos") // Es buena práctica usar versiones como v1
 public class Controlador {
+
     @Autowired
     private Servicio servicio;
 
     @GetMapping
-    public ResponseEntity<List<Pagos>> listarPagos(){
-        List<Pagos> pagos = servicio.listarPagos();
-        if (pagos.isEmpty()) {
-            return ResponseEntity.noContent().build(); 
-        } else {
-            return ResponseEntity.ok(pagos);
-        }
+    public ResponseEntity<List<PagosDTO>> listarPagos() {
+        log.info("Controlador: Petición GET recibida para listar pagos");
+        List<PagosDTO> pagos = servicio.listarPagos();
+        return ResponseEntity.ok(pagos);
     }
 
-    @GetMapping("/{pagoID}")
-    public ResponseEntity<Pagos> obtenerPagoPorId(@Valid @PathVariable Long pagoID){
-        Pagos pago = servicio.obtenerPagoPorId(pagoID);
-        if (pago == null) {
-            return ResponseEntity.notFound().build(); 
-        } else {
-            return ResponseEntity.ok(pago);
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<PagosDTO> obtenerPorId(@PathVariable Long id) {
+        log.info("Controlador: Petición GET recibida para ID {}", id);
+        PagosDTO pago = servicio.obtenerPagoPorId(id);
+        return ResponseEntity.ok(pago);
     }
 
     @PostMapping
-    public ResponseEntity<Pagos> guardarPago(@Valid @RequestBody Pagos pagos){
-        try {
-            Pagos nuevoPago = servicio.guardarPago(pagos);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPago);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<PagosDTO> crearPago(@Valid @RequestBody PagosDTO pagosDTO) {
+        log.info("Controlador: Petición POST recibida para nueva compra");
+        PagosDTO guardado = servicio.guardarPago(pagosDTO);
+        return new ResponseEntity<>(guardado, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{pagoID}")
-    public ResponseEntity<Pagos> actualizarPago(@PathVariable Long pagoID, @Valid @RequestBody Pagos pagos){
-        try {
-            Pagos pagoExistente = servicio.obtenerPagoPorId(pagoID);
-            if (pagoExistente == null) {
-                return ResponseEntity.notFound().build();
-            }
-            pagoExistente.setPagoID(pagoID);
-            pagoExistente.setCompraID(pagos.getCompraID());
-            pagoExistente.setMonto_total(pagos.getMonto_total());
-            pagoExistente.setMetodo_pago(pagos.getMetodo_pago());
-            pagoExistente.setEstado_pago(pagos.getEstado_pago());
-
-            Pagos pagoActualizado = servicio.guardarPago(pagoExistente);
-            return ResponseEntity.ok(pagoActualizado);
-            
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<PagosDTO> actualizarPago(@PathVariable Long id, @Valid @RequestBody PagosDTO pagosDTO) {
+        log.info("Controlador: Petición PUT recibida para ID {}", id);
+        PagosDTO actualizado = servicio.actualizarPago(id, pagosDTO);
+        return ResponseEntity.ok(actualizado);
     }
 
-    @DeleteMapping("/{pagoID}")
-    public ResponseEntity<Void> eliminarPago(@PathVariable Long pagoID){
-        try {
-            servicio.eliminarPago(pagoID);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarPago(@PathVariable Long id) {
+        log.info("Controlador: Petición DELETE recibida para ID {}", id);
+        servicio.eliminarPago(id);
+        return ResponseEntity.noContent().build();
     }
 }
