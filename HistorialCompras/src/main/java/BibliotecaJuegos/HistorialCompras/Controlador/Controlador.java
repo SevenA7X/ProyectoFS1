@@ -1,77 +1,52 @@
 package BibliotecaJuegos.HistorialCompras.Controlador;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import BibliotecaJuegos.HistorialCompras.Modelo.HistorialCompras;
+import BibliotecaJuegos.HistorialCompras.dto.HistorialComprasDTO;
 import BibliotecaJuegos.HistorialCompras.Servicio.Servicio;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-
+@Slf4j
 @RestController
-@RequestMapping("api/v1/historialcompras")
+@RequestMapping("/api/v1/historial")
 public class Controlador {
 
     @Autowired
     private Servicio servicio;
 
     @GetMapping
-    public ResponseEntity<List<HistorialCompras>> listarHistorialCompras(){
-        List<HistorialCompras> listaHistorialCompras = servicio.findAll();
-        if (listaHistorialCompras.isEmpty()) {
+    public ResponseEntity<List<HistorialComprasDTO>> listarHistorial() {
+        log.info("Controlador Historial: Petición GET recibida");
+        List<HistorialComprasDTO> lista = servicio.listarTodo();
+        if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(listaHistorialCompras);
         }
+        return ResponseEntity.ok(lista);
     }
 
-    @GetMapping("/{historialID}")
-    public ResponseEntity<HistorialCompras> obtenerHistorialComprasPorId(@Valid @PathVariable Long historialID){
-        HistorialCompras historialCompras = servicio.findById(historialID);
-        if (historialCompras != null) {
-            return ResponseEntity.ok(historialCompras);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<HistorialComprasDTO> buscarHistorial(@PathVariable Long id) {
+        log.info("Controlador Historial: Petición GET para ID {}", id);
+        HistorialComprasDTO resultado = servicio.buscarPorId(id);
+        return ResponseEntity.ok(resultado);
     }
 
     @PostMapping
-    public ResponseEntity<HistorialCompras> agregarHistorialCompras(@Valid @RequestBody HistorialCompras historialCompras){
-        try {
-            HistorialCompras nuevoHistorialCompras = servicio.save(historialCompras);
-            return ResponseEntity.ok(nuevoHistorialCompras);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<HistorialComprasDTO> agregarHistorial(@Valid @RequestBody HistorialComprasDTO dto) {
+        log.info("Controlador Historial: Petición POST recibida");
+        HistorialComprasDTO guardado = servicio.guardar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
-    @PutMapping("/{historialID}")
-    public ResponseEntity<HistorialCompras> modificarHistorialCompras(@PathVariable Long historialID, @Valid @RequestBody HistorialCompras historialCompras){
-        try {
-            HistorialCompras historialComprasExistente = servicio.findById(historialID);
-            if (historialComprasExistente != null) {
-                historialComprasExistente.setCompraID(historialID);
-                historialComprasExistente.setUsuarioID(historialCompras.getUsuarioID());
-                historialComprasExistente.setFecha_compra(historialCompras.getFecha_compra());
-                historialComprasExistente.setMonto_total(historialCompras.getMonto_total());
-                historialComprasExistente.setEstado_pago(historialCompras.getEstado_pago());
-                HistorialCompras historialComprasActualizado = servicio.save(historialComprasExistente);
-                return ResponseEntity.ok(historialComprasActualizado);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-
-        }   
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarHistorial(@PathVariable Long id) {
+        log.info("Controlador Historial: Petición DELETE para ID {}", id);
+        servicio.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }
