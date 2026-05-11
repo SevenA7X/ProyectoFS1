@@ -1,8 +1,6 @@
 package com.proyectofs1.catalogo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +15,6 @@ public class Categoria {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre de la categoría no puede estar vacío")
-    @Size(max = 50, message = "El nombre no puede exceder los 50 caracteres")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String nombre;
 }

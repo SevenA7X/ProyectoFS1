@@ -98,10 +98,11 @@ public class JuegoService {
         dto.setId(juego.getId());
         dto.setTitulo(juego.getTitulo());
         dto.setPrecio(juego.getPrecio());
+        dto.setDescripcion(juego.getDescripcion());
         
-        // Mapeo de la relación (evita problemas de recursión)
+        // Mapeo de la relación usando el ID para el DTO
         if (juego.getCategoria() != null) {
-            dto.setNombreCategoria(juego.getCategoria().getNombre());
+            dto.setCategoriaId(juego.getCategoria().getId());
         }
         return dto;
     }
@@ -111,7 +112,15 @@ public class JuegoService {
         juego.setId(dto.getId());
         juego.setTitulo(dto.getTitulo());
         juego.setPrecio(dto.getPrecio());
-        // Si su clase Juego tiene más atributos, asígnelos aquí
+        juego.setDescripcion(dto.getDescripcion());
+        
+        // Reconstrucción de la relación para JPA
+        if (dto.getCategoriaId() != null) {
+            // Se crea una instancia de Categoria solo con el ID para que Hibernate sepa la llave foránea
+            com.proyectofs1.catalogo.model.Categoria categoria = new com.proyectofs1.catalogo.model.Categoria();
+            categoria.setId(dto.getCategoriaId());
+            juego.setCategoria(categoria);
+        }
         return juego;
     }
 }

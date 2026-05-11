@@ -42,4 +42,31 @@ public class CategoriaController {
             return ResponseEntity.notFound().build();
         }
     }
+    // Método para ELIMINAR una categoría
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        // Llama al método que ya tienes en CategoriaService
+        categoriaService.deleteById(id);
+        
+        // Retorna 204 No Content, que es el estándar cuando se borra algo exitosamente
+        return ResponseEntity.noContent().build();
+    }
+
+    // Método para ACTUALIZAR una categoría (Opcional pero muy recomendado para un CRUD completo)
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoriaDTO> update(@PathVariable Long id, @Valid @RequestBody CategoriaDTO categoriaDTO) {
+        // 1. Primero verificamos que la categoría exista
+        CategoriaDTO categoriaExistente = categoriaService.findById(id);
+        if (categoriaExistente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        // 2. Le asignamos el ID de la ruta para asegurar que no se cree una nueva
+        categoriaDTO.setId(id);
+        
+        // 3. Guardamos los cambios (el método save de JPA actualiza si el ID ya existe)
+        CategoriaDTO categoriaActualizada = categoriaService.save(categoriaDTO);
+        
+        return ResponseEntity.ok(categoriaActualizada);
+    }
 }
