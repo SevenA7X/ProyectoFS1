@@ -29,4 +29,8 @@ public class Estadistica {
     private String accion; 
 
     private LocalDateTime fecha;
+
+    
+
+    
 }
