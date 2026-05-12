@@ -1,6 +1,6 @@
 package BibliotecaJuegos.LicenciasYDescargas.Controlador;
 
-import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciaDTO;
+import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciasYDescargasDTO;
 import BibliotecaJuegos.LicenciasYDescargas.Servicio.Servicio;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,9 @@ public class Controlador {
     private Servicio servicio;
 
     @GetMapping
-    public ResponseEntity<List<LicenciaDTO>> listarLicencias() {
+    public ResponseEntity<List<LicenciasYDescargasDTO>> listarLicencias() {
         log.info("Controlador Licencias: Petición GET recibida");
-        List<LicenciaDTO> lista = servicio.findAll();
+        List<LicenciasYDescargasDTO> lista = servicio.findAll();
         if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -30,13 +30,13 @@ public class Controlador {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LicenciaDTO> buscarLicencia(@PathVariable Long id) {
+    public ResponseEntity<LicenciasYDescargasDTO> buscarLicencia(@PathVariable Long id) {
         log.info("Controlador Licencias: Petición GET para ID {}", id);
         return ResponseEntity.ok(servicio.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<LicenciaDTO> agregarLicencia(@Valid @RequestBody LicenciaDTO dto) {
+    public ResponseEntity<LicenciasYDescargasDTO> agregarLicencia(@Valid @RequestBody LicenciasYDescargasDTO dto) {
         log.info("Controlador Licencias: Petición POST recibida");
         return ResponseEntity.status(HttpStatus.CREATED).body(servicio.save(dto));
     }

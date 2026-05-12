@@ -1,6 +1,6 @@
 package BibliotecaJuegos.LicenciasYDescargas.Servicio;
 
-import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciaDTO;
+import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciasYDescargasDTO;
 import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
 import BibliotecaJuegos.LicenciasYDescargas.Repositorio.Repositorio;
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +20,17 @@ public class Servicio {
     @Autowired
     private Repositorio repositorio;
 
-    public List<LicenciaDTO> findAll() {
+    public List<LicenciasYDescargasDTO> findAll() {
         log.info("Capa Servicio Licencias: Recuperando todos los registros");
         List<Licencia> entidades = repositorio.findAll();
-        List<LicenciaDTO> dtos = new ArrayList<>();
+        List<LicenciasYDescargasDTO> dtos = new ArrayList<>();
         for (Licencia l : entidades) {
             dtos.add(convertirADTO(l));
         }
         return dtos;
     }
 
-    public LicenciaDTO findById(Long id) {
+    public LicenciasYDescargasDTO findById(Long id) {
         log.info("Capa Servicio Licencias: Buscando licencia con ID {}", id);
         Optional<Licencia> oLicencia = repositorio.findById(id);
         if (oLicencia.isPresent()) {
@@ -41,7 +41,7 @@ public class Servicio {
         }
     }
 
-    public LicenciaDTO save(LicenciaDTO dto) {
+    public LicenciasYDescargasDTO save(LicenciasYDescargasDTO dto) {
         log.info("Capa Servicio Licencias: Guardando nueva licencia");
         Licencia entidad = convertirAEntidad(dto);
         return convertirADTO(repositorio.save(entidad));
@@ -56,8 +56,8 @@ public class Servicio {
         }
     }
 
-    private LicenciaDTO convertirADTO(Licencia e) {
-        LicenciaDTO d = new LicenciaDTO();
+    private LicenciasYDescargasDTO convertirADTO(Licencia e) {
+        LicenciasYDescargasDTO d = new LicenciasYDescargasDTO();
         d.setLicenciaID(e.getLicenciaID());
         d.setUsuarioID(e.getUsuarioID());
         d.setVideojuegoID(e.getVideojuegoID());
@@ -65,7 +65,7 @@ public class Servicio {
         return d;
     }
 
-    private Licencia convertirAEntidad(LicenciaDTO d) {
+    private Licencia convertirAEntidad(LicenciasYDescargasDTO d) {
         Licencia e = new Licencia();
         e.setLicenciaID(d.getLicenciaID());
         e.setUsuarioID(d.getUsuarioID());
