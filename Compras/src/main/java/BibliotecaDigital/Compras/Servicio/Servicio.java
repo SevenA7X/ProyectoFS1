@@ -3,6 +3,12 @@ package BibliotecaDigital.Compras.Servicio;
 import BibliotecaDigital.Compras.dto.ComprasDTO;
 import BibliotecaDigital.Compras.Modelo.Compra;
 import BibliotecaDigital.Compras.Repositorio.Repositorio;
+
+// Importaciones necesarias para la comunicación con Catálogo
+import BibliotecaDigital.Compras.client.CatalogoFeignClient; 
+import BibliotecaDigital.Compras.dto.JuegoValidacionDTO; 
+import feign.FeignException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +25,10 @@ public class Servicio {
 
     @Autowired
     private Repositorio repositorio;
+
+    // Inyección del cliente Feign para conectarse con Catálogo
+    @Autowired
+    private CatalogoFeignClient catalogoFeignClient;
 
     public List<ComprasDTO> findAll() {
         log.info("Capa Servicio Compras: Recuperando todos los registros");
@@ -43,10 +53,26 @@ public class Servicio {
         }
     }
 
-    public ComprasDTO save(ComprasDTO ComprasDTO) {
-        log.info("Capa Servicio Compras: Guardando nueva compra para usuario {}", ComprasDTO.getUsuarioID());
+    public ComprasDTO save(ComprasDTO comprasDTO) {
+        log.info("Capa Servicio Compras: Validando videojuego con ID {} en MS Catálogo antes de procesar la compra", comprasDTO.getVideojuegoID());
         
-        Compra entidad = convertirAEntidad(ComprasDTO);
+        // --- INICIO DE LA COMUNICACIÓN CON CATÁLOGO ---
+        try {
+            // Llamada síncrona al microservicio de Catálogo
+            JuegoValidacionDTO juego = catalogoFeignClient.obtenerJuegoPorId(comprasDTO.getVideojuegoID());
+            log.info("Validación exitosa: El videojuego '{}' existe en el catálogo y está disponible.", juego.getTitulo());
+
+        } catch (FeignException.NotFound e) {
+            log.error("Error de validación: El videojuego con ID {} no existe.", comprasDTO.getVideojuegoID());
+            throw new IllegalArgumentException("No se puede procesar la compra: El videojuego no existe en el catálogo.");
+        } catch (FeignException e) {
+            log.error("Error de comunicación con MS Catálogo: {}", e.getMessage());
+            throw new RuntimeException("Error de comunicación con el servicio de Catálogo. Intente más tarde.");
+        }
+        // --- FIN DE LA COMUNICACIÓN ---
+
+        log.info("Capa Servicio Compras: Guardando nueva orden de compra para el usuario {}", comprasDTO.getUsuarioID());
+        Compra entidad = convertirAEntidad(comprasDTO);
         Compra guardada = repositorio.save(entidad);
         
         return convertirADTO(guardada);
@@ -56,11 +82,12 @@ public class Servicio {
         log.info("Capa Servicio Compras: Eliminando compra con ID {}", compraID);
         if (repositorio.existsById(compraID)) {
             repositorio.deleteById(compraID);
+            log.info("Capa Servicio Compras: Compra eliminada correctamente.");
         } else {
+            log.warn("Fallo al eliminar: No existe compra con ID {}", compraID);
             throw new RuntimeException("No se puede eliminar: El ID no existe");
         }
     }
-
 
     private ComprasDTO convertirADTO(Compra entidad) {
         ComprasDTO dto = new ComprasDTO();
