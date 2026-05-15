@@ -21,7 +21,7 @@ El proyecto implementa el patrón **CSR (Controller-Service-Repository)**, garan
 | Componente | Tecnología Implementada |
 | :--- | :--- |
 | **Framework Core** | Spring Boot (Java) |
-| **Persistencia** | JPA + Hibernate |(One database per service)
+| **Persistencia** | JPA + Hibernate |
 | **Bases de Datos** | MySQL (Instancias independientes por microservicio) |
 | **Comunicación Remota** | Spring Cloud OpenFeign (Síncrona) |
 | **Control de Versiones** | Git y GitHub |
