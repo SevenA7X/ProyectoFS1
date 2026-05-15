@@ -34,4 +34,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                              .body("Ocurrió un error interno en el servidor.");
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> manejarIllegalArgument(IllegalArgumentException ex) {
+        Map<String, Object> respuesta = new HashMap<>();
+        respuesta.put("status", HttpStatus.BAD_REQUEST.value());
+        respuesta.put("error", "Petición Incorrecta");
+        respuesta.put("mensaje", ex.getMessage()); 
+        
+        return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
+    }
 }

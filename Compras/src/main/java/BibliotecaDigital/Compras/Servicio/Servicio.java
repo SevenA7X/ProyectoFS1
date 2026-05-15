@@ -4,14 +4,19 @@ import BibliotecaDigital.Compras.dto.ComprasDTO;
 import BibliotecaDigital.Compras.Modelo.Compra;
 import BibliotecaDigital.Compras.Repositorio.Repositorio;
 
-// Importaciones necesarias para la comunicación con Catálogo
+
+import BibliotecaDigital.Compras.client.UsuarioFeingClient;
 import BibliotecaDigital.Compras.client.CatalogoFeignClient; 
-import BibliotecaDigital.Compras.dto.JuegoValidacionDTO; 
+import BibliotecaDigital.Compras.dto.JuegoValidacionDTO;
+import BibliotecaDigital.Compras.dto.UsuarioDTO;
 import feign.FeignException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -26,9 +31,11 @@ public class Servicio {
     @Autowired
     private Repositorio repositorio;
 
-    // Inyección del cliente Feign para conectarse con Catálogo
     @Autowired
     private CatalogoFeignClient catalogoFeignClient;
+
+    @Autowired
+    private UsuarioFeingClient usuarioFeignClient;
 
     public List<ComprasDTO> findAll() {
         log.info("Capa Servicio Compras: Recuperando todos los registros");
@@ -49,14 +56,37 @@ public class Servicio {
             return convertirADTO(oCompra.get());
         } else {
             log.error("Capa Servicio Compras: No se encontró el ID {}", compraID);
-            throw new RuntimeException("Compra no encontrada");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Compra no encontrada");
         }
     }
 
-    public ComprasDTO save(ComprasDTO comprasDTO) {
+public ComprasDTO save(ComprasDTO comprasDTO) {
+
+        log.info("Capa Servicio Compras: Validando usuario con ID {} en MS Usuarios antes de procesar la compra", comprasDTO.getUsuarioID());
+        try {
+            // Llamada síncrona al microservicio de Usuarios
+            UsuarioDTO usuario = usuarioFeignClient.obtenerUsuarioPorId(comprasDTO.getUsuarioID());
+            log.info("Validación exitosa: El usuario '{}' existe y tiene el rol {}.", usuario.getNombreUsuario(), usuario.getRol());
+
+            // Validación opcional de regla de negocio basada en el DTO real
+            if ("MODERADOR".equals(usuario.getRol())) {
+                log.warn("Error de validación: El usuario con ID {} es MODERADOR y no puede comprar.", comprasDTO.getUsuarioID());
+                throw new IllegalArgumentException("No se puede procesar la compra: Los moderadores no están autorizados a comprar.");
+            }
+
+        } catch (FeignException.NotFound e) {
+            if (e.status() == 404 || e.status() == 409) {
+            log.error("Error de validación: El usuario con ID {} no existe.", comprasDTO.getUsuarioID());
+            throw new IllegalArgumentException("No se puede procesar la compra: El usuario comprador no existe.");
+            }
+        } catch (FeignException e) {
+            log.error("Error de comunicación con MS Usuarios: {}", e.getMessage());
+            throw new RuntimeException("Error de comunicación con el servicio de Usuarios. Intente más tarde.");
+        }
+
+
+
         log.info("Capa Servicio Compras: Validando videojuego con ID {} en MS Catálogo antes de procesar la compra", comprasDTO.getVideojuegoID());
-        
-        // --- INICIO DE LA COMUNICACIÓN CON CATÁLOGO ---
         try {
             // Llamada síncrona al microservicio de Catálogo
             JuegoValidacionDTO juego = catalogoFeignClient.obtenerJuegoPorId(comprasDTO.getVideojuegoID());
@@ -69,7 +99,8 @@ public class Servicio {
             log.error("Error de comunicación con MS Catálogo: {}", e.getMessage());
             throw new RuntimeException("Error de comunicación con el servicio de Catálogo. Intente más tarde.");
         }
-        // --- FIN DE LA COMUNICACIÓN ---
+
+
 
         log.info("Capa Servicio Compras: Guardando nueva orden de compra para el usuario {}", comprasDTO.getUsuarioID());
         Compra entidad = convertirAEntidad(comprasDTO);
@@ -77,6 +108,7 @@ public class Servicio {
         
         return convertirADTO(guardada);
     }
+    
 
     public void delete(Long compraID) {
         log.info("Capa Servicio Compras: Eliminando compra con ID {}", compraID);
