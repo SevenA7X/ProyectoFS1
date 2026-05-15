@@ -55,6 +55,27 @@ public class JuegoService {
         juegoRepository.deleteById(id);
         log.info("Juego con ID: {} eliminado correctamente (si existía).", id);
     }
+<<<<<<< HEAD
+    // Llama a la búsqueda por coincidencia parcial
+    public List<Juego> buscarPorTitulo(String titulo) {
+        return juegoRepository.findByTituloContainingIgnoreCase(titulo);
+    }
+
+    // Llama a la búsqueda por presupuesto
+    public List<Juego> buscarPorPresupuesto(double precioMaximo) {
+        return juegoRepository.findByPrecioLessThanEqual(precioMaximo);
+    }
+
+    // Llama a la búsqueda combinada JPQL
+    public List<Juego> buscarPorGeneroYPresupuesto(String genero, double precioMaximo) {
+        return juegoRepository.buscarPorGeneroYPrecioMaximo(genero, precioMaximo);
+    }
+    // Llama a la consulta SQL nativa
+    public List<Juego> buscarOfertas() {
+        return juegoRepository.buscarTop3OfertasNativo();
+    }
+}
+=======
 
     public List<JuegoDTO> buscarPorCategoria(String nombreCategoria) {
         log.info("Buscando juegos por categoría: {}", nombreCategoria);
@@ -124,3 +145,4 @@ public class JuegoService {
         return juego;
     }
 }
+>>>>>>> origin/develop
