@@ -4,7 +4,10 @@ import com.example.gestion.gestion_usuarios.model.Usuario;
 import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +32,10 @@ public class UsuarioService {
 
     // 2. Método para obtener uno por ID
     public UsuarioDTO obtenerPorId(Long id) {
-        log.info("Buscando usuario con ID: {}", id);
-        Usuario usuario = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return convertirADTO(usuario);
+    log.info("Buscando usuario con ID: {}", id);
+    Usuario usuario = repository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+    return convertirADTO(usuario);
     }
 
     // 3. Método para CREAR (IE 2.2.1)
