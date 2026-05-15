@@ -1,7 +1,8 @@
 package com.example.Estadisticas_Uso.repository;
 
-import com.biblioteca.estadistica.model.EventoEstadistica;
-import com.biblioteca.estadistica.model.TipoEvento;
+import com.example.Estadisticas_Uso.modelo.EventoEstadistica;
+import com.example.Estadisticas_Uso.modelo.EstadisticasGlobales;
+import com.example.Estadisticas_Uso.modelo.Estadistica;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

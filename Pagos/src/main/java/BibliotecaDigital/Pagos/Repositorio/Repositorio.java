@@ -8,4 +8,5 @@ import BibliotecaDigital.Pagos.Modelo.Pagos;
 @Repository
 public interface Repositorio extends JpaRepository<Pagos, Long>{
 
+    
 }

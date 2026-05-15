@@ -1,92 +1,60 @@
 package BibliotecaDigital.Compras.Controlador;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import BibliotecaDigital.Compras.Modelo.Compra;
+import BibliotecaDigital.Compras.dto.ComprasDTO;
 import BibliotecaDigital.Compras.Servicio.Servicio;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/compras")
 public class Controlador {
+
     @Autowired
     private Servicio servicio;
 
     @GetMapping
-    public ResponseEntity<List<Compra>> listarCompras(){
-        List<Compra> listaCompras = servicio.findAll();
-        if (listaCompras.isEmpty()) {
+    public ResponseEntity<List<ComprasDTO>> listarCompras() {
+        log.info("Controlador Compras: Petición GET recibida");
+        List<ComprasDTO> lista = servicio.findAll();
+        if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(listaCompras);
         }
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{compraID}")
-    public ResponseEntity<Compra> buscarCompra(@Valid @PathVariable Long compraID){
-        try {
-            Compra com = servicio.findById(compraID);
-            return ResponseEntity.ok(com);
-            
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ComprasDTO> buscarCompra(@PathVariable Long compraID) {
+        log.info("Controlador Compras: Petición GET para ID {}", compraID);
+        ComprasDTO com = servicio.findById(compraID);
+        return ResponseEntity.ok(com);
     }
 
     @PostMapping
-    public ResponseEntity<Compra> agregarCompra(@RequestBody Compra compra){
-        try {
-            Compra com = servicio.save(compra);
-            return ResponseEntity.status(HttpStatus.CREATED).body(com);
-            
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<ComprasDTO> agregarCompra(@Valid @RequestBody ComprasDTO ComprasDTO) {
+        log.info("Controlador Compras: Petición POST recibida");
+        ComprasDTO nuevaCompra = servicio.save(ComprasDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCompra);
     }
 
     @PutMapping("/{compraID}")
-    public ResponseEntity<Compra> modificarCompra(@PathVariable Long compraID, @Valid @RequestBody Compra compra){
-        try {
-            Compra com = servicio.findById(compraID);
-            if (com == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            com.setCompraID(compraID);
-            com.setUsuarioID(com.getUsuarioID());
-            com.setVideojuegoID(com.getVideojuegoID());
-            com.setFechaCompra(com.getFechaCompra());
-            com.setEstado_orden(com.getEstado_orden());
-            servicio.save(com);
-            return ResponseEntity.ok(com);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<ComprasDTO> modificarCompra(@PathVariable Long compraID, @Valid @RequestBody ComprasDTO ComprasDTO) {
+        log.info("Controlador Compras: Petición PUT para ID {}", compraID);
+        ComprasDTO.setCompraID(compraID); 
+        ComprasDTO actualizada = servicio.save(ComprasDTO);
+        return ResponseEntity.ok(actualizada);
     }
 
     @DeleteMapping("/{compraID}")
-    public ResponseEntity<Compra> eliminarCompra(@PathVariable Long compraID){
-        try {
-            Compra com = servicio.findById(compraID);
-            if (com == null) {
-                return ResponseEntity.notFound().build();
-            }
-            servicio.delete(compraID);
-            return ResponseEntity.ok(com);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Void> eliminarCompra(@PathVariable Long compraID) {
+        log.info("Controlador Compras: Petición DELETE para ID {}", compraID);
+        servicio.delete(compraID);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,6 @@
 package com.example.Estadisticas_Uso.modelo;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

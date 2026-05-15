@@ -5,17 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.proyectofs1.catalogo.model.Juego;
+import com.proyectofs1.catalogo.dto.JuegoDTO; // Importación del DTO
 import com.proyectofs1.catalogo.service.JuegoService;
 
 import jakarta.validation.Valid;
@@ -23,77 +15,85 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/juegos")
 public class JuegoController {
+    
     @Autowired
     private JuegoService juegoService;
 
     @GetMapping
-    public ResponseEntity <List<Juego>> findAll(){
-        List<Juego> juegos = juegoService.findAll();
+    public ResponseEntity<List<JuegoDTO>> findAll() {
+        List<JuegoDTO> juegos = juegoService.findAll();
         if(juegos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(juegos);
-
     }
 
     @PostMapping
-    public ResponseEntity<Juego> save(@RequestBody Juego juego){
-        Juego juegoNuevo = juegoService.save(juego);
+    public ResponseEntity<JuegoDTO> save(@Valid @RequestBody JuegoDTO juegoDTO) {
+        JuegoDTO juegoNuevo = juegoService.save(juegoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(juegoNuevo);
     }
 
+    // --- AQUÍ ESTÁ EL PASO 1 ACOPLADO ---
+    // Método crucial para que la validación de Feign (Microservicio Reseña) funcione
     @GetMapping("/{id}")
-    public ResponseEntity<Juego> findById(@Valid@PathVariable Long id){
-        try {
-            Juego juego = juegoService.findById(id);
-            return ResponseEntity.ok(juego);
-        } catch ( Exception e ) {
-            return  ResponseEntity.notFound().build();
+    public ResponseEntity<JuegoDTO> findById(@PathVariable Long id) {
+        JuegoDTO juegoDTO = juegoService.findById(id);
+        
+        // Se elimina el try-catch. 
+        // Retorna 200 OK si existe, 404 Not Found si es nulo.
+        if (juegoDTO != null) {
+            return ResponseEntity.ok(juegoDTO);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
+    
     @PutMapping("/{id}")
-    public ResponseEntity<Juego> save(@PathVariable Long id, @Valid @RequestBody Juego juego){
-        try {
-            // Asignación crucial para garantizar que se actualice el registro correcto
-            juego.setId(id); 
-            return ResponseEntity.ok(juegoService.save(juego));
-        } catch (Exception e){
+    public ResponseEntity<JuegoDTO> update(@PathVariable Long id, @Valid @RequestBody JuegoDTO juegoDTO) {
+        juegoDTO.setId(id); 
+        JuegoDTO juegoActualizado = juegoService.save(juegoDTO);
+        
+        if (juegoActualizado != null) {
+            return ResponseEntity.ok(juegoActualizado);
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> borrar(@PathVariable Long id){
+    public ResponseEntity<String> borrar(@PathVariable Long id) {
         juegoService.deleteById(id);
         return ResponseEntity.ok("Juego Eliminado");
     }
+    
     // http://localhost:8081/api/v1/juegos/buscar?titulo=elden
     @GetMapping("/buscar")
-    public ResponseEntity<List<Juego>> buscarPorTitulo(@RequestParam String titulo) {
-        List<Juego> resultados = juegoService.buscarPorTitulo(titulo);
+    public ResponseEntity<List<JuegoDTO>> buscarPorTitulo(@RequestParam String titulo) {
+        List<JuegoDTO> resultados = juegoService.buscarPorTitulo(titulo);
         return ResponseEntity.ok(resultados);
     }
 
     // http://localhost:8081/api/v1/juegos/presupuesto?maximo=20000
     @GetMapping("/presupuesto")
-    public ResponseEntity<List<Juego>> buscarPorPresupuesto(@RequestParam double maximo) {
-        List<Juego> resultados = juegoService.buscarPorPresupuesto(maximo);
+    public ResponseEntity<List<JuegoDTO>> buscarPorPresupuesto(@RequestParam double maximo) {
+        List<JuegoDTO> resultados = juegoService.buscarPorPresupuesto(maximo);
         return ResponseEntity.ok(resultados);
     }
 
-    // http://localhost:8081/api/v1/juegos/filtro?genero=RPG&maximo=50000
+    // Actualizado: http://localhost:8081/api/v1/juegos/filtro?categoria=RPG&maximo=50000
     @GetMapping("/filtro")
-    public ResponseEntity<List<Juego>> buscarPorFiltros(
-            @RequestParam String genero, 
+    public ResponseEntity<List<JuegoDTO>> buscarPorFiltros(
+            @RequestParam String categoria, 
             @RequestParam double maximo) {
-        List<Juego> resultados = juegoService.buscarPorGeneroYPresupuesto(genero, maximo);
+        List<JuegoDTO> resultados = juegoService.buscarPorGeneroYPresupuesto(categoria, maximo);
         return ResponseEntity.ok(resultados);
     }
+    
     // http://localhost:8081/api/v1/juegos/ofertas
-    // Endpoint: GET /api/v1/juegos/ofertas
     @GetMapping("/ofertas")
-    public ResponseEntity<List<Juego>> obtenerOfertas() {
-        List<Juego> resultados = juegoService.buscarOfertas();
+    public ResponseEntity<List<JuegoDTO>> obtenerOfertas() {
+        List<JuegoDTO> resultados = juegoService.buscarOfertas();
         if (resultados.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

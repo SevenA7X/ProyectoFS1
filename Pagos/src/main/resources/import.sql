@@ -1,0 +1,15 @@
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (101, 25500.00, 'Tarjeta de Credito', 'Completado', '2026-05-01');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (102, 12000.50, 'Transferencia', 'Pendiente', '2026-05-01');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (103, 45000.00, 'PayPal', 'Completado', '2026-05-02');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (104, 8900.00, 'Tarjeta de Debito', 'Fallido', '2026-05-02');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (105, 150.75, 'Mercado Pago', 'Completado', '2026-05-03');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (106, 33400.00, 'Tarjeta de Credito', 'Completado', '2026-05-03');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (107, 500.00, 'Transferencia', 'Pendiente', '2026-05-04');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (108, 125000.00, 'Tarjeta de Credito', 'Completado', '2026-05-04');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (109, 7200.20, 'PayPal', 'Cancelado', '2026-05-05');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (110, 18900.00, 'Tarjeta de Debito', 'Completado', '2026-05-05');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (111, 4500.00, 'Transferencia', 'Completado', '2026-05-06');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (112, 99.99, 'Tarjeta de Credito', 'Pendiente', '2026-05-06');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (113, 67000.00, 'Apple Pay', 'Completado', '2026-05-07');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (114, 2100.00, 'PayPal', 'Completado', '2026-05-07');
+INSERT INTO db_pagos (compraID, monto_total, metodo_pago, estado_pago, fecha) VALUES (115, 31500.50, 'Tarjeta de Debito', 'Pendiente', '2026-05-07');

@@ -1,50 +1,116 @@
 package com.proyectofs1.moderacion.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
+import com.proyectofs1.moderacion.client.ResenaFeignClient; // <-- Importación del Feign Client
+import com.proyectofs1.moderacion.dto.ModeracionDTO;
 import com.proyectofs1.moderacion.model.Moderacion;
 import com.proyectofs1.moderacion.repository.ModeracionRepository;
 
-// La anotación @Service indica a Spring que esta clase contiene la lógica de negocio.
-// Funciona como un intermediario entre el Controlador (que recibe las peticiones) 
-// y el Repositorio (que maneja los datos en la base de datos).
 @Service
-
-// La anotación @Transactional asegura que las operaciones de base de datos se ejecuten 
-// de forma segura. Si ocurre un error a mitad de un proceso, deshace los cambios 
-// para que la base de datos no quede inconsistente.
 @Transactional
 public class ModeracionService {
 
-    // @Autowired inyecta el repositorio automáticamente. 
-    // Evita que usted tenga que crear la instancia manualmente (ej. usando "new").
+    private static final Logger log = LoggerFactory.getLogger(ModeracionService.class);
+
     @Autowired
     private ModeracionRepository moderacionRepository;
 
-    // Recupera una lista con todos los registros de moderación guardados en la tabla.
-    public List<Moderacion> findAll() {
-        return moderacionRepository.findAll();
+    @Autowired
+    private ResenaFeignClient resenaFeignClient; // <-- Inyección del Feign Client
+
+    public List<ModeracionDTO> findAll() {
+        log.info("Consultando todos los registros de moderación.");
+        return moderacionRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    // Busca un registro de moderación específico utilizando su ID.
-    // El método .get() se utiliza para extraer el objeto de la envoltura "Optional" 
-    // que devuelve la base de datos por defecto.
-    public Moderacion findById(Long id) {
-        return moderacionRepository.findById(id).get();
+    public ModeracionDTO findById(Long id) {
+        log.info("Buscando registro de moderación con ID: {}", id);
+        return moderacionRepository.findById(id)
+                .map(this::convertToDTO)
+                .orElseThrow(() -> {
+                    log.warn("Moderación no encontrada con ID: {}", id);
+                    return new IllegalArgumentException("Registro de moderación no encontrado.");
+                });
     }
 
-    // Recibe un objeto Moderacion y lo guarda en la base de datos. 
-    // Si el objeto ya tiene un ID existente, en lugar de crearlo de nuevo, lo actualiza.
-    public Moderacion save(Moderacion moderacion) {
-        return moderacionRepository.save(moderacion);
+    // <-- Método save actualizado con la lógica de Feign -->
+    public ModeracionDTO save(ModeracionDTO moderacionDTO) {
+        log.info("Validando existencia del contenido tipo: {} con ID: {}", 
+                 moderacionDTO.getTipoContenido(), moderacionDTO.getContenidoId());
+        
+        // Validación síncrona mediante Feign
+        if ("RESENA".equalsIgnoreCase(moderacionDTO.getTipoContenido())) {
+            try {
+                resenaFeignClient.obtenerResenaPorId(moderacionDTO.getContenidoId());
+                log.info("Validación exitosa: La reseña existe.");
+            } catch (Exception e) {
+                log.error("Fallo de validación: El contenido no existe.");
+                throw new IllegalArgumentException("No se puede moderar: El contenido con ID " + 
+                                                   moderacionDTO.getContenidoId() + " no existe en el microservicio de Reseñas.");
+            }
+        }
+
+        Moderacion moderacion = convertToEntity(moderacionDTO);
+        Moderacion guardada = moderacionRepository.save(moderacion);
+        log.info("Registro de moderación guardado con éxito (ID: {})", guardada.getId());
+        return convertToDTO(guardada);
     }
 
-    // Busca un registro por su ID y lo elimina permanentemente de la base de datos.
+    public ModeracionDTO update(Long id, ModeracionDTO moderacionDTO) {
+        log.info("Actualizando registro de moderación ID: {}", id);
+        Moderacion existente = moderacionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No se puede actualizar: Registro no encontrado."));
+
+        existente.setResultado(moderacionDTO.getResultado());
+        existente.setObservaciones(moderacionDTO.getObservaciones());
+        // No actualizamos contenidoId ni tipoContenido por seguridad de negocio
+
+        Moderacion actualizada = moderacionRepository.save(existente);
+        log.info("Registro ID {} actualizado correctamente.", id);
+        return convertToDTO(actualizada);
+    }
+
     public void deleteById(Long id) {
+        log.info("Intentando eliminar moderación ID: {}", id);
+        if (!moderacionRepository.existsById(id)) {
+            log.warn("Fallo al eliminar: ID {} no existe.", id);
+            throw new IllegalArgumentException("El registro a eliminar no existe.");
+        }
         moderacionRepository.deleteById(id);
+        log.info("Registro ID {} eliminado con éxito.", id);
+    }
+
+    private ModeracionDTO convertToDTO(Moderacion moderacion) {
+        ModeracionDTO dto = new ModeracionDTO();
+        dto.setId(moderacion.getId());
+        dto.setContenidoId(moderacion.getContenidoId());
+        dto.setTipoContenido(moderacion.getTipoContenido());
+        dto.setResultado(moderacion.getResultado());
+        dto.setObservaciones(moderacion.getObservaciones());
+        dto.setFechaRevision(moderacion.getFechaRevision());
+        return dto;
+    }
+
+    private Moderacion convertToEntity(ModeracionDTO dto) {
+        Moderacion moderacion = new Moderacion();
+        moderacion.setId(dto.getId());
+        moderacion.setContenidoId(dto.getContenidoId());
+        moderacion.setTipoContenido(dto.getTipoContenido());
+        moderacion.setResultado(dto.getResultado());
+        moderacion.setObservaciones(dto.getObservaciones());
+        if(dto.getFechaRevision() != null){
+            moderacion.setFechaRevision(dto.getFechaRevision());
+        }
+        return moderacion;
     }
 }
