@@ -6,19 +6,23 @@ import BibliotecaDigital.Compras.Repositorio.Repositorio;
 
 
 import BibliotecaDigital.Compras.client.UsuarioFeingClient;
-import BibliotecaDigital.Compras.client.CatalogoFeignClient; 
+import BibliotecaDigital.Compras.client.CatalogoFeignClient;
+import BibliotecaDigital.Compras.client.PagosFeignClient;
 import BibliotecaDigital.Compras.dto.JuegoValidacionDTO;
+import BibliotecaDigital.Compras.dto.PagosDTO;
 import BibliotecaDigital.Compras.dto.UsuarioDTO;
 import feign.FeignException;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +40,9 @@ public class Servicio {
 
     @Autowired
     private UsuarioFeingClient usuarioFeignClient;
+
+    @Autowired
+    private PagosFeignClient pagoFeingClient;
 
     public List<ComprasDTO> findAll() {
         log.info("Capa Servicio Compras: Recuperando todos los registros");
@@ -60,38 +67,30 @@ public class Servicio {
         }
     }
 
-public ComprasDTO save(ComprasDTO comprasDTO) {
+    public ComprasDTO save(ComprasDTO comprasDTO) {
 
         log.info("Capa Servicio Compras: Validando usuario con ID {} en MS Usuarios antes de procesar la compra", comprasDTO.getUsuarioID());
         try {
-            // Llamada síncrona al microservicio de Usuarios
             UsuarioDTO usuario = usuarioFeignClient.obtenerUsuarioPorId(comprasDTO.getUsuarioID());
             log.info("Validación exitosa: El usuario '{}' existe y tiene el rol {}.", usuario.getNombreUsuario(), usuario.getRol());
 
-            // Validación opcional de regla de negocio basada en el DTO real
             if ("MODERADOR".equals(usuario.getRol())) {
                 log.warn("Error de validación: El usuario con ID {} es MODERADOR y no puede comprar.", comprasDTO.getUsuarioID());
                 throw new IllegalArgumentException("No se puede procesar la compra: Los moderadores no están autorizados a comprar.");
             }
-
         } catch (FeignException.NotFound e) {
-            if (e.status() == 404 || e.status() == 409) {
             log.error("Error de validación: El usuario con ID {} no existe.", comprasDTO.getUsuarioID());
             throw new IllegalArgumentException("No se puede procesar la compra: El usuario comprador no existe.");
-            }
         } catch (FeignException e) {
             log.error("Error de comunicación con MS Usuarios: {}", e.getMessage());
             throw new RuntimeException("Error de comunicación con el servicio de Usuarios. Intente más tarde.");
         }
 
-
-
         log.info("Capa Servicio Compras: Validando videojuego con ID {} en MS Catálogo antes de procesar la compra", comprasDTO.getVideojuegoID());
+        JuegoValidacionDTO juego; 
         try {
-            // Llamada síncrona al microservicio de Catálogo
-            JuegoValidacionDTO juego = catalogoFeignClient.obtenerJuegoPorId(comprasDTO.getVideojuegoID());
-            log.info("Validación exitosa: El videojuego '{}' existe en el catálogo y está disponible.", juego.getTitulo());
-
+            juego = catalogoFeignClient.obtenerJuegoPorId(comprasDTO.getVideojuegoID());
+            log.info("Validación exitosa: El videojuego '{}' existe en el catálogo y cuesta ${}.", juego.getTitulo(), juego.getPrecio());
         } catch (FeignException.NotFound e) {
             log.error("Error de validación: El videojuego con ID {} no existe.", comprasDTO.getVideojuegoID());
             throw new IllegalArgumentException("No se puede procesar la compra: El videojuego no existe en el catálogo.");
@@ -100,6 +99,25 @@ public ComprasDTO save(ComprasDTO comprasDTO) {
             throw new RuntimeException("Error de comunicación con el servicio de Catálogo. Intente más tarde.");
         }
 
+        log.info("Capa Servicio Compras: Enviando cobro para la compra del videojuego ID {} al MS Pagos", comprasDTO.getVideojuegoID());
+        try {
+            PagosDTO nuevoPago = new PagosDTO();
+            
+            nuevoPago.setCompraID(comprasDTO.getVideojuegoID()); 
+            nuevoPago.setMonto_total(juego.getPrecio()); 
+            nuevoPago.setMetodo_pago("TARJETA"); 
+            nuevoPago.setEstado_pago(comprasDTO.getEstado_orden());
+            nuevoPago.setFecha(LocalDate.now()); 
+
+            ResponseEntity<PagosDTO> respuestaPago = pagoFeingClient.crearPago(nuevoPago);
+            
+            log.info("¡Pago registrado en MS Pagos con éxito! Status: {} - Pago ID: {}", 
+                    respuestaPago.getStatusCode(), respuestaPago.getBody().getPagoID());
+            
+        } catch (FeignException e) {
+            log.error("Error al procesar el pago en MS Pagos: {}", e.getMessage());
+            throw new RuntimeException("No se pudo completar la compra: El pago fue rechazado o el servicio no está disponible.");
+        }
 
 
         log.info("Capa Servicio Compras: Guardando nueva orden de compra para el usuario {}", comprasDTO.getUsuarioID());
@@ -107,6 +125,7 @@ public ComprasDTO save(ComprasDTO comprasDTO) {
         Compra guardada = repositorio.save(entidad);
         
         return convertirADTO(guardada);
+
     }
     
 
