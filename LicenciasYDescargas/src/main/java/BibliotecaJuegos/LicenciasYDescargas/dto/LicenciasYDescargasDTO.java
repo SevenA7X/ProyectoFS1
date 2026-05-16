@@ -1,6 +1,8 @@
 package BibliotecaJuegos.LicenciasYDescargas.dto;
 
 import java.time.LocalDate;
+
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
@@ -21,4 +23,7 @@ public class LicenciasYDescargasDTO {
     @NotNull(message = "La fecha de emisión de la licencia es obligatoria")
     @PastOrPresent(message = "La fecha de la licencia no puede ser una fecha futura")
     private LocalDate fecha;
+
+    @NotBlank(message = "El código de licencia no puede estar vacío")
+    private String codigoLicencia;
 }

@@ -1,6 +1,8 @@
 package BibliotecaJuegos.LicenciasYDescargas.Modelo;
 
 import java.time.LocalDate;
+
+import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciasYDescargasDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +27,7 @@ public class Licencia {
 
     @Column(nullable=false)
     private LocalDate fecha;
+
+    @Column(nullable=false, unique=true)
+    private String codigoLicencia;
 }

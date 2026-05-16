@@ -1,13 +1,18 @@
 package BibliotecaJuegos.LicenciasYDescargas.Servicio;
 
 import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciasYDescargasDTO;
-import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
+import BibliotecaJuegos.LicenciasYDescargas.dto.ComprasDTO;
+import BibliotecaJuegos.LicenciasYDescargas.client.ComprasFeignClient; 
 import BibliotecaJuegos.LicenciasYDescargas.Repositorio.Repositorio;
+import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
+import feign.FeignException;
 
+import java.time.LocalDate;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +24,28 @@ public class Servicio {
 
     @Autowired
     private Repositorio repositorio;
+
+    @Autowired
+    private ComprasFeignClient comprasClient; 
+
+    public LicenciasYDescargasDTO emitirLicenciaPorCompra(LicenciasYDescargasDTO dto) {
+    log.info("Capa Servicio Licencias: Generando licencia automática para la compra ID {}", dto);
+    
+    try {
+        Licencia nuevaLicencia = new Licencia();
+        nuevaLicencia.setUsuarioID(dto.getUsuarioID());
+        nuevaLicencia.setVideojuegoID(dto.getVideojuegoID());
+        nuevaLicencia.setFecha(LocalDate.now());
+        nuevaLicencia.setCodigoLicencia(UUID.randomUUID().toString());
+        Licencia guardada = repositorio.save(nuevaLicencia);
+        log.info("¡Licencia generada automáticamente con éxito! ID: {}, Código: {}", guardada.getLicenciaID(), guardada.getCodigoLicencia());
+        return convertirADTO(guardada);
+
+    } catch (Exception e) {
+        log.error("Error interno al guardar la licencia: {}", e.getMessage());
+        throw new RuntimeException("No se pudo procesar la creación de la licencia.");
+    }
+}
 
     public List<LicenciasYDescargasDTO> findAll() {
         log.info("Capa Servicio Licencias: Recuperando todos los registros");
@@ -62,6 +89,7 @@ public class Servicio {
         d.setUsuarioID(e.getUsuarioID());
         d.setVideojuegoID(e.getVideojuegoID());
         d.setFecha(e.getFecha());
+        d.setCodigoLicencia(e.getCodigoLicencia()); 
         return d;
     }
 
@@ -71,6 +99,7 @@ public class Servicio {
         e.setUsuarioID(d.getUsuarioID());
         e.setVideojuegoID(d.getVideojuegoID());
         e.setFecha(d.getFecha());
+        e.setCodigoLicencia(d.getCodigoLicencia());
         return e;
     }
 }
