@@ -19,6 +19,13 @@ public class Controlador {
     @Autowired
     private Servicio servicio;
 
+    @PostMapping("/generar")
+    public ResponseEntity<Void> generarLicenciaPorCompra(@RequestBody LicenciasYDescargasDTO dto) {
+    log.info("Controlador Licencias: Generando licencia para Usuario {} y Juego {}", dto.getUsuarioID(), dto.getVideojuegoID());
+    servicio.emitirLicenciaPorCompra(dto); 
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+}
+
     @GetMapping
     public ResponseEntity<List<LicenciasYDescargasDTO>> listarLicencias() {
         log.info("Controlador Licencias: Petición GET recibida");
