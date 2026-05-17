@@ -5,6 +5,8 @@ import BibliotecaJuegos.HistorialCompras.Repositorio.Repositorio;
 import BibliotecaJuegos.HistorialCompras.Servicio.Servicio;
 import BibliotecaJuegos.HistorialCompras.client.ComprasFeignClient;
 import BibliotecaJuegos.HistorialCompras.dto.CompraDTO;
+import BibliotecaJuegos.HistorialCompras.dto.HistorialComprasDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,8 @@ public class Controlador {
     private Servicio servicio;
 
     @GetMapping
-    public ResponseEntity<List<HistorialCompras>> obtenerTodoElHistorial() {
-        List<HistorialCompras> historial = historialRepository.findAll();
+    public ResponseEntity<List<HistorialComprasDTO>> obtenerTodoElHistorial() {
+        List<HistorialComprasDTO> historial = servicio.listarTodo();
         return ResponseEntity.ok(historial);
     }
 

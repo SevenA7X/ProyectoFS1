@@ -22,18 +22,26 @@ public class Servicio {
     @Autowired
     private Repositorio repositorio;
 
-    public List<HistorialComprasDTO> listarTodo() {
+public List<HistorialComprasDTO> listarTodo() {
         log.info("Capa Servicio Historial: Recuperando todos los registros");
         List<HistorialCompras> entidades = repositorio.findAll();
-        List<HistorialComprasDTO> dtos = new ArrayList<>();
 
+        if (entidades.isEmpty()) {
+            log.warn("Capa Servicio Historial: No se encontraron registros en la base de datos. Lanzando 404.");
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.NOT_FOUND, 
+                "No existen registros en el historial de compras"
+            );
+        }
+
+        List<HistorialComprasDTO> dtos = new ArrayList<>();
         for (HistorialCompras entidad : entidades) {
             dtos.add(convertirADTO(entidad));
         }
+        
         log.info("Capa Servicio Historial: Transformados {} registros", dtos.size());
         return dtos;
     }
-
     public List<HistorialCompras> obtenerHistorialPorUsuario(Long usuarioID) {
         log.info("Capa Servicio Historial: Buscando compras locales para el usuario ID {}", usuarioID);
         
