@@ -7,7 +7,9 @@ import BibliotecaJuegos.LicenciasYDescargas.Repositorio.Repositorio;
 import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus; // 👈 Importante para el 404
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException; // 👈 Importante para lanzar el error
 import jakarta.transaction.Transactional;
 import feign.FeignException;
 
@@ -29,23 +31,23 @@ public class Servicio {
     private ComprasFeignClient comprasClient; 
 
     public LicenciasYDescargasDTO emitirLicenciaPorCompra(LicenciasYDescargasDTO dto) {
-    log.info("Capa Servicio Licencias: Generando licencia automática para la compra ID {}", dto);
-    
-    try {
-        Licencia nuevaLicencia = new Licencia();
-        nuevaLicencia.setUsuarioID(dto.getUsuarioID());
-        nuevaLicencia.setVideojuegoID(dto.getVideojuegoID());
-        nuevaLicencia.setFecha(LocalDate.now());
-        nuevaLicencia.setCodigoLicencia(UUID.randomUUID().toString());
-        Licencia guardada = repositorio.save(nuevaLicencia);
-        log.info("¡Licencia generada automáticamente con éxito! ID: {}, Código: {}", guardada.getLicenciaID(), guardada.getCodigoLicencia());
-        return convertirADTO(guardada);
+        log.info("Capa Servicio Licencias: Generando licencia automática para la compra ID {}", dto);
+        
+        try {
+            Licencia nuevaLicencia = new Licencia();
+            nuevaLicencia.setUsuarioID(dto.getUsuarioID());
+            nuevaLicencia.setVideojuegoID(dto.getVideojuegoID());
+            nuevaLicencia.setFecha(LocalDate.now());
+            nuevaLicencia.setCodigoLicencia(UUID.randomUUID().toString());
+            Licencia guardada = repositorio.save(nuevaLicencia);
+            log.info("¡Licencia generada automáticamente con éxito! ID: {}, Código: {}", guardada.getLicenciaID(), guardada.getCodigoLicencia());
+            return convertirADTO(guardada);
 
-    } catch (Exception e) {
-        log.error("Error interno al guardar la licencia: {}", e.getMessage());
-        throw new RuntimeException("No se pudo procesar la creación de la licencia.");
+        } catch (Exception e) {
+            log.error("Error interno al guardar la licencia: {}", e.getMessage());
+            throw new RuntimeException("No se pudo procesar la creación de la licencia.");
+        }
     }
-}
 
     public List<LicenciasYDescargasDTO> findAll() {
         log.info("Capa Servicio Licencias: Recuperando todos los registros");
@@ -66,6 +68,24 @@ public class Servicio {
             log.error("Capa Servicio Licencias: ID {} no encontrado", id);
             throw new RuntimeException("Licencia no encontrada");
         }
+    }
+
+    public List<LicenciasYDescargasDTO> obtenerLicenciasPorUsuario(Long usuarioId) {
+        log.info("Capa Servicio Licencias: Buscando todas las licencias del usuario ID {}", usuarioId);
+        
+        List<Licencia> entidades = repositorio.findByUsuarioID(usuarioId);
+
+
+        if (entidades.isEmpty()) {
+            log.warn("Capa Servicio Licencias: El usuario ID {} no posee ninguna licencia. Lanzando 404.", usuarioId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario no tiene licencias registradas");
+        }
+
+        List<LicenciasYDescargasDTO> dtos = new ArrayList<>();
+        for (Licencia l : entidades) {
+            dtos.add(convertirADTO(l));
+        }
+        return dtos;
     }
 
     public LicenciasYDescargasDTO save(LicenciasYDescargasDTO dto) {

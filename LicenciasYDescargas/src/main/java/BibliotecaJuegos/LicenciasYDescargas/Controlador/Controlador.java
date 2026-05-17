@@ -42,6 +42,15 @@ public class Controlador {
         return ResponseEntity.ok(servicio.findById(id));
     }
 
+    @GetMapping("/usuario/{usuarioID}")
+    public ResponseEntity<List<LicenciasYDescargasDTO>> obtenerLicenciasPorUsuario(@PathVariable Long usuarioID) {
+        log.info("Capa Controlador Licencias: Solicitando licencias para el usuario ID {}", usuarioID);
+        
+        List<LicenciasYDescargasDTO> licencias = servicio.obtenerLicenciasPorUsuario(usuarioID);
+        
+        return ResponseEntity.ok(licencias);
+    }
+
     @PostMapping
     public ResponseEntity<LicenciasYDescargasDTO> agregarLicencia(@Valid @RequestBody LicenciasYDescargasDTO dto) {
         log.info("Controlador Licencias: Petición POST recibida");
