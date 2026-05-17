@@ -1,46 +1,28 @@
 package com.example.Notificaciones.modelo;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-
-public class NotificacionModelo {
 
 @Entity
-@Table(name = "notificaciones")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Notificacion {
+@Table(name = "notificaciones")
+public class NotificacionModelo {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private Long usuarioId;
-    
-    @Column(nullable = false)
-    private String titulo;
-    
-    @Column(nullable = false, length = 15)
-    private String mensaje;
-    
-    @Enumerated(EnumType.STRING)
-    private TipoNotificacion tipo;
-    
-    private boolean leida = false;
-    
-    @Column(name = "fecha_creacion")
-    private Date fechaCreacion;
-    
-    @Column(name = "fecha_envio")
-    private LocalDateTime fechaEnvio;
-    
-    }
 
+    @Column(nullable = false)
+    private String mensaje;
+
+    @Column(nullable = false)
+    private String tipo; // "ALERTA_PAGO", "SISTEMA"
 }
