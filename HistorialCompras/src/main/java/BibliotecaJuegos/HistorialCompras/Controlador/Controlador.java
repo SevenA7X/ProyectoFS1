@@ -1,52 +1,63 @@
 package BibliotecaJuegos.HistorialCompras.Controlador;
 
-import BibliotecaJuegos.HistorialCompras.dto.HistorialComprasDTO;
+import BibliotecaJuegos.HistorialCompras.Modelo.HistorialCompras;
+import BibliotecaJuegos.HistorialCompras.Repositorio.Repositorio;
 import BibliotecaJuegos.HistorialCompras.Servicio.Servicio;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import BibliotecaJuegos.HistorialCompras.client.ComprasFeignClient;
+import BibliotecaJuegos.HistorialCompras.dto.CompraDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/historial")
 public class Controlador {
 
     @Autowired
+    private Repositorio historialRepository;
+
+    @Autowired
+    private ComprasFeignClient comprasFeignClient;
+
+    @Autowired
     private Servicio servicio;
 
     @GetMapping
-    public ResponseEntity<List<HistorialComprasDTO>> listarHistorial() {
-        log.info("Controlador Historial: Petición GET recibida");
-        List<HistorialComprasDTO> lista = servicio.listarTodo();
-        if (lista.isEmpty()) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<List<HistorialCompras>> obtenerTodoElHistorial() {
+        List<HistorialCompras> historial = historialRepository.findAll();
+        return ResponseEntity.ok(historial);
+    }
+
+    @GetMapping("/usuario/{usuarioID}")
+    public ResponseEntity<List<HistorialCompras>> obtenerHistorialPorUsuario(@PathVariable Long usuarioID) {
+        List<HistorialCompras> historial = servicio.obtenerHistorialPorUsuario(usuarioID);
+        
+        return ResponseEntity.ok(historial);
+    }
+
+    @GetMapping("/remoto/compras")
+    public ResponseEntity<List<HistorialCompras>> guardarYObtenerComprasRemotas() {
+        List<CompraDTO> comprasRemotas = comprasFeignClient.obtenerTodasLasCompras();
+        
+        java.util.ArrayList<HistorialCompras> historialGuardado = new java.util.ArrayList<>();
+
+        for (CompraDTO compraDto : comprasRemotas) {
+            HistorialCompras historial = new HistorialCompras();
+            
+            historial.setCompraID(compraDto.getId());
+            historial.setUsuarioID(compraDto.getUsuarioId());
+            if (compraDto.getFechaCompra() != null) {
+                java.time.LocalDate fechaParseada = java.time.LocalDate.parse(compraDto.getFechaCompra());
+                historial.setFecha_compra(fechaParseada);
+            }
+            historial.setEstado_pago("Compra sincronizada desde el microservicio remoto. Estado: " + compraDto.getEstado());
+
+            HistorialCompras registroGuardado = historialRepository.save(historial);
+            historialGuardado.add(registroGuardado);
         }
-        return ResponseEntity.ok(lista);
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<HistorialComprasDTO> buscarHistorial(@PathVariable Long id) {
-        log.info("Controlador Historial: Petición GET para ID {}", id);
-        HistorialComprasDTO resultado = servicio.buscarPorId(id);
-        return ResponseEntity.ok(resultado);
+        return ResponseEntity.ok(historialGuardado);
+        }
     }
-
-    @PostMapping
-    public ResponseEntity<HistorialComprasDTO> agregarHistorial(@Valid @RequestBody HistorialComprasDTO dto) {
-        log.info("Controlador Historial: Petición POST recibida");
-        HistorialComprasDTO guardado = servicio.guardar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarHistorial(@PathVariable Long id) {
-        log.info("Controlador Historial: Petición DELETE para ID {}", id);
-        servicio.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
-}
