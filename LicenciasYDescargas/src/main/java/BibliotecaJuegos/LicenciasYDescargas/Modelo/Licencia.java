@@ -1,8 +1,6 @@
 package BibliotecaJuegos.LicenciasYDescargas.Modelo;
 
 import java.time.LocalDate;
-
-import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciasYDescargasDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
