@@ -2,6 +2,7 @@ package BibliotecaJuegos.HistorialCompras.Controlador;
 
 import BibliotecaJuegos.HistorialCompras.Modelo.HistorialCompras;
 import BibliotecaJuegos.HistorialCompras.Repositorio.Repositorio;
+import BibliotecaJuegos.HistorialCompras.Servicio.Servicio;
 import BibliotecaJuegos.HistorialCompras.client.ComprasFeignClient;
 import BibliotecaJuegos.HistorialCompras.dto.CompraDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,28 +21,43 @@ public class Controlador {
     @Autowired
     private ComprasFeignClient comprasFeignClient;
 
+    @Autowired
+    private Servicio servicio;
+
     @GetMapping
     public ResponseEntity<List<HistorialCompras>> obtenerTodoElHistorial() {
         List<HistorialCompras> historial = historialRepository.findAll();
         return ResponseEntity.ok(historial);
     }
 
-
     @GetMapping("/usuario/{usuarioID}")
     public ResponseEntity<List<HistorialCompras>> obtenerHistorialPorUsuario(@PathVariable Long usuarioID) {
-        List<HistorialCompras> historial = historialRepository.findByUsuarioID(usuarioID);
+        List<HistorialCompras> historial = servicio.obtenerHistorialPorUsuario(usuarioID);
+        
         return ResponseEntity.ok(historial);
     }
 
-    @GetMapping("/usuario/{usuarioID}/total")
-    public ResponseEntity<Double> obtenerTotalGastado(@PathVariable Long usuarioID) {
-        Double total = historialRepository.calcularTotalGastadoPorUsuario(usuarioID);
-        return ResponseEntity.ok(total != null ? total : 0.0);
-    }
-
     @GetMapping("/remoto/compras")
-    public ResponseEntity<List<CompraDTO>> obtenerComprasRemotas() {
+    public ResponseEntity<List<HistorialCompras>> guardarYObtenerComprasRemotas() {
         List<CompraDTO> comprasRemotas = comprasFeignClient.obtenerTodasLasCompras();
-        return ResponseEntity.ok(comprasRemotas);
+        
+        java.util.ArrayList<HistorialCompras> historialGuardado = new java.util.ArrayList<>();
+
+        for (CompraDTO compraDto : comprasRemotas) {
+            HistorialCompras historial = new HistorialCompras();
+            
+            historial.setCompraID(compraDto.getId());
+            historial.setUsuarioID(compraDto.getUsuarioId());
+            if (compraDto.getFechaCompra() != null) {
+                java.time.LocalDate fechaParseada = java.time.LocalDate.parse(compraDto.getFechaCompra());
+                historial.setFecha_compra(fechaParseada);
+            }
+            historial.setEstado_pago("Compra sincronizada desde el microservicio remoto. Estado: " + compraDto.getEstado());
+
+            HistorialCompras registroGuardado = historialRepository.save(historial);
+            historialGuardado.add(registroGuardado);
+        }
+
+        return ResponseEntity.ok(historialGuardado);
+        }
     }
-}

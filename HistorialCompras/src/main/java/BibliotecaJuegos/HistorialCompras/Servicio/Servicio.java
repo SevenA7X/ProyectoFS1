@@ -5,12 +5,14 @@ import BibliotecaJuegos.HistorialCompras.Modelo.HistorialCompras;
 import BibliotecaJuegos.HistorialCompras.Repositorio.Repositorio;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,16 +34,20 @@ public class Servicio {
         return dtos;
     }
 
-    public HistorialComprasDTO buscarPorId(Long id) {
-        log.info("Capa Servicio Historial: Buscando registro con ID {}", id);
-        Optional<HistorialCompras> oHistorial = repositorio.findById(id);
-
-        if (oHistorial.isPresent()) {
-            return convertirADTO(oHistorial.get());
-        } else {
-            log.error("Capa Servicio Historial: ID {} no encontrado", id);
-            throw new RuntimeException("Entrada de historial no encontrada");
+    public List<HistorialCompras> obtenerHistorialPorUsuario(Long usuarioID) {
+        log.info("Capa Servicio Historial: Buscando compras locales para el usuario ID {}", usuarioID);
+        
+        List<HistorialCompras> historial = repositorio.findByUsuarioID(usuarioID);
+        
+        if (historial == null || historial.isEmpty()) {
+            log.warn("Capa Servicio Historial: El usuario ID {} no tiene compras locales.", usuarioID);
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, 
+                "El usuario no tiene compras registradas"
+            );
         }
+
+        return historial;
     }
 
     public HistorialComprasDTO guardar(HistorialComprasDTO dto) {
@@ -66,7 +72,6 @@ public class Servicio {
         dto.setCompraID(entidad.getCompraID());
         dto.setUsuarioID(entidad.getUsuarioID());
         dto.setFecha_compra(entidad.getFecha_compra());
-        dto.setMonto_total(entidad.getMonto_total());
         dto.setEstado_pago(entidad.getEstado_pago());
         return dto;
     }
@@ -77,7 +82,6 @@ public class Servicio {
         entidad.setCompraID(dto.getCompraID());
         entidad.setUsuarioID(dto.getUsuarioID());
         entidad.setFecha_compra(dto.getFecha_compra());
-        entidad.setMonto_total(dto.getMonto_total());
         entidad.setEstado_pago(dto.getEstado_pago());
         return entidad;
     }

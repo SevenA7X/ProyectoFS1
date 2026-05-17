@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface ComprasFeignClient {
 
-    @RequestLine("GET /api/compras")
+    @RequestLine("GET /api/v1/compras")
     @Headers("Accept: application/json")
     List<CompraDTO> obtenerTodasLasCompras();
 
-    @RequestLine("GET /api/compras/usuario/{usuarioId}")
+    @RequestLine("GET /api/v1/compras/usuario/{usuarioId}")
     @Headers("Accept: application/json")
-    List<CompraDTO> obtenerComprasPorUsuario(@Param("usuarioId") String usuarioId);
+    List<CompraDTO> obtenerComprasPorUsuario(@Param("usuarioId") Long usuarioId);
 }

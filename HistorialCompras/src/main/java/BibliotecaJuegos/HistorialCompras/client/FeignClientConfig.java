@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 public class FeignClientConfig {
 
     @Bean
-    public ComprasFeignClient compraClient() { // 🎯 "Feign" bien escrito
+    public ComprasFeignClient compraClient() {
         return Feign.builder()
                 .encoder(new JacksonEncoder()) 
                 .decoder(new JacksonDecoder()) 
-                .logger(new Slf4jLogger(ComprasFeignClient.class)) // 🎯 Aquí también
+                .logger(new Slf4jLogger(ComprasFeignClient.class))
                 .logLevel(feign.Logger.Level.FULL)
-                .target(ComprasFeignClient.class, "http://localhost:8081"); // 🎯 Y aquí
+                .target(ComprasFeignClient.class, "http://localhost:8085");
     }
 }

@@ -1,6 +1,8 @@
 package BibliotecaJuegos.HistorialCompras.Modelo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,9 +32,6 @@ public class HistorialCompras {
 
     @Column(name = "fecha_compra", nullable = false)
     private LocalDate fecha_compra;
-
-    @Column(name = "monto_total", nullable = false)
-    private Double monto_total;
 
     @Column(nullable = false)
     private String estado_pago;
