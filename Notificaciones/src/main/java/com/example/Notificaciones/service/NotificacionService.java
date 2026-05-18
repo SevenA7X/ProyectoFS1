@@ -1,19 +1,31 @@
 package com.example.Notificaciones.service;
 
-import com.biblioteca.notificacion.model.Notificacion;
-import com.biblioteca.notificacion.model.dto.NotificacionRequestDTO;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.example.Notificaciones.modelo.NotificacionModelo;
+import com.example.Notificaciones.repository.NotificacionRepository;
+import com.example.Notificaciones.dto.NotificacionesDTO;
 
-public interface NotificacionService {
-    
-    Notificacion crearNotificacion(NotificacionRequestDTO request);
-    List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId);
-    List<Notificacion> obtenerNotificacionesNoLeidas(Long usuarioId);
-    Notificacion marcarComoLeida(Long notificacionId);
-    void marcarTodasComoLeidas(Long usuarioId);
-    void eliminarNotificacion(Long id);
-    long contarNoLeidas(Long usuarioId);
-    void enviarNotificacionCompraExitosa(Long usuarioId, String juegoNombre);
-    void enviarNotificacionLicenciaActivada(Long usuarioId, String juegoNombre);
-    void enviarNotificacionResenaModerada(Long usuarioId, String juegoNombre, boolean aceptada);
+@Service
+public class NotificacionService {
+
+    private static final Logger log = LoggerFactory.getLogger(NotificacionService.class);
+
+    @Autowired
+    private NotificacionRepository notificacionRepository;
+
+    public NotificacionesDTO enviarNotificacion(NotificacionesDTO dto) {
+        log.info("Creando notificación de tipo {} para el usuario ID: {}", dto.getTipo(), dto.getUsuarioId());
+        
+        NotificacionModelo notificacion = new NotificacionModelo();
+        notificacion.setUsuarioId(dto.getUsuarioId());
+        notificacion.setMensaje(dto.getMensaje());
+        notificacion.setTipo(dto.getTipo());
+        
+        NotificacionModelo guardada = notificacionRepository.save(notificacion);
+        dto.setId(guardada.getId());
+        return dto;
+    }
 }

@@ -1,0 +1,15 @@
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (101, 'Juan Pérez', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (102, 'María López', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (103, 'Carlos Mendoza', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (104, 'Ana Gómez', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (105, 'Diego Torres', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (106, 'Elena Rostova', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (107, 'Luis Castro', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (108, 'Sofía Silva', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (109, 'Javier Ortega', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (110, 'Lucía Fernández', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (111, 'Andrés Plaza', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (112, 'Valentina Ríos', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (113, 'Martín Morales', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (114, 'Camila Fuentes', 'CLIENTE', 'ACTIVO');
+INSERT INTO usuario (id, nombre, rol, estado) VALUES (115, 'Alejandro Marín', 'CLIENTE', 'ACTIVO');

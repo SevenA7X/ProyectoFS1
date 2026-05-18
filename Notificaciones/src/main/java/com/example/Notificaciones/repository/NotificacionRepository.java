@@ -1,13 +1,9 @@
 package com.example.Notificaciones.repository;
 
-import com.example.Notificaciones.modelo.Notificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
+import com.example.Notificaciones.modelo.NotificacionModelo;
 
 @Repository
-public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
-    List<Notificacion> findByUsuarioIdOrderByFechaCreacionDesc(Long usuarioId);
-    List<Notificacion> findByUsuarioIdAndLeidaFalse(Long usuarioId);
-    long countByUsuarioIdAndLeidaFalse(Long usuarioId);
+public interface NotificacionRepository extends JpaRepository<NotificacionModelo, Long> {
 }

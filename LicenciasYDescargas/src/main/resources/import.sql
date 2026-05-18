@@ -1,0 +1,15 @@
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (101, 500, '2026-01-10', 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (102, 501, '2026-01-12', 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (103, 502, '2026-01-15', 'c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (104, 503, '2026-01-20', 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (105, 504, '2026-02-01', 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (106, 505, '2026-02-05', 'f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (107, 506, '2026-02-10', 'a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (108, 507, '2026-02-14', 'b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (109, 508, '2026-02-18', 'c9d0e1f2-a3b4-5c6d-7e8f-9a0b1c2d3e4f');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (110, 509, '2026-02-22', 'd0e1f2a3-b4c5-6d7e-8f9a-0b1c2d3e4f5a');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (111, 510, '2026-03-01', 'e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (112, 511, '2026-03-05', 'f2a3b4c5-d6e7-8f9a-0b1c-2d3e4f5a6b7c');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (113, 512, '2026-03-10', 'a3b4c5d6-e7f8-9a0b-1c2d-3e4f5a6b7c8d');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (114, 513, '2026-03-15', 'b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e');
+INSERT INTO db_licencias (usuarioID, videojuegoID, fecha, codigo_licencia) VALUES (115, 514, '2026-03-20', 'c5d6e7f8-a9b0-1c2d-3e4f-5a6b7c8d9e0f');

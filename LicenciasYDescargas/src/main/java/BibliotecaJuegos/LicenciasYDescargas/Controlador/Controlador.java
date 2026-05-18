@@ -1,23 +1,17 @@
 package BibliotecaJuegos.LicenciasYDescargas.Controlador;
 
-import java.util.List;
-
+import BibliotecaJuegos.LicenciasYDescargas.dto.LicenciasYDescargasDTO;
+import BibliotecaJuegos.LicenciasYDescargas.Servicio.Servicio;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import BibliotecaJuegos.LicenciasYDescargas.Modelo.Licencia;
-import BibliotecaJuegos.LicenciasYDescargas.Servicio.Servicio;
-import jakarta.validation.Valid;
+import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/licencias")
 public class Controlador {
@@ -25,65 +19,48 @@ public class Controlador {
     @Autowired
     private Servicio servicio;
 
-    @GetMapping
-    public ResponseEntity<List<Licencia>> listarLicencias(){
-        List<Licencia> listaLicencias = servicio.findAll();
+    @PostMapping("/generar")
+    public ResponseEntity<Void> generarLicenciaPorCompra(@RequestBody LicenciasYDescargasDTO dto) {
+    log.info("Controlador Licencias: Generando licencia para Usuario {} y Juego {}", dto.getUsuarioID(), dto.getVideojuegoID());
+    servicio.emitirLicenciaPorCompra(dto); 
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+}
 
-        if (listaLicencias.isEmpty()){
+    @GetMapping
+    public ResponseEntity<List<LicenciasYDescargasDTO>> listarLicencias() {
+        log.info("Controlador Licencias: Petición GET recibida");
+        List<LicenciasYDescargasDTO> lista = servicio.findAll();
+        if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-
-        return ResponseEntity.ok(listaLicencias);
+        return ResponseEntity.ok(lista);
     }
 
-    @GetMapping("/{licenciaID}")
-    public ResponseEntity<Licencia> buscarLicencia(@Valid @PathVariable Long licenciaID){
-        try {
-            Licencia licencia = servicio.findById(licenciaID);
-            return ResponseEntity.ok(licencia);
-            
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<LicenciasYDescargasDTO> buscarLicencia(@PathVariable Long id) {
+        log.info("Controlador Licencias: Petición GET para ID {}", id);
+        return ResponseEntity.ok(servicio.findById(id));
+    }
+
+    @GetMapping("/usuario/{usuarioID}")
+    public ResponseEntity<List<LicenciasYDescargasDTO>> obtenerLicenciasPorUsuario(@PathVariable Long usuarioID) {
+        log.info("Capa Controlador Licencias: Solicitando licencias para el usuario ID {}", usuarioID);
+        
+        List<LicenciasYDescargasDTO> licencias = servicio.obtenerLicenciasPorUsuario(usuarioID);
+        
+        return ResponseEntity.ok(licencias);
     }
 
     @PostMapping
-    public ResponseEntity<Licencia> agregarLicencia(@Valid @RequestBody Licencia licencia){
-        try {
-            Licencia licenciaNueva = servicio.save(licencia);
-            return ResponseEntity.status(HttpStatus.CREATED).body(licenciaNueva);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<LicenciasYDescargasDTO> agregarLicencia(@Valid @RequestBody LicenciasYDescargasDTO dto) {
+        log.info("Controlador Licencias: Petición POST recibida");
+        return ResponseEntity.status(HttpStatus.CREATED).body(servicio.save(dto));
     }
 
-    @DeleteMapping("/{licenciaID}")
-    public ResponseEntity<?> eliminarLicencia(@Valid @PathVariable Long licenciaID){
-        try {
-            servicio.delete(licenciaID);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PutMapping("/{licenciaID}")
-    public ResponseEntity<Licencia> actualizarLicencia (@PathVariable Long licenciaID, @Valid @RequestBody Licencia licencia){
-        try {
-            Licencia lic = servicio.findById(licenciaID);
-            if (lic == null){
-                return ResponseEntity.notFound().build();
-            }
-            lic.setLicenciaID(licenciaID);
-            lic.setUsuarioID(licencia.getUsuarioID());
-            lic.setVideojuegoID(licencia.getVideojuegoID());
-            lic.setFecha(licencia.getFecha());
-            
-            servicio.save(lic);
-            return ResponseEntity.ok(lic);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-        
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarLicencia(@PathVariable Long id) {
+        log.info("Controlador Licencias: Petición DELETE para ID {}", id);
+        servicio.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
