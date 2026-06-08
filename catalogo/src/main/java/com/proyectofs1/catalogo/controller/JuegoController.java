@@ -68,8 +68,8 @@ public class JuegoController {
     }
     
     // http://localhost:8081/api/v1/juegos/buscar?titulo=elden
-    @GetMapping("/buscar")
-    public ResponseEntity<List<JuegoDTO>> buscarPorTitulo(@RequestParam String titulo) {
+    /* @GetMapping("/buscar")
+        public ResponseEntity<List<JuegoDTO>> buscarPorTitulo(@RequestParam String titulo) {
         List<JuegoDTO> resultados = juegoService.buscarPorTitulo(titulo);
         return ResponseEntity.ok(resultados);
     }
@@ -88,15 +88,8 @@ public class JuegoController {
             @RequestParam double maximo) {
         List<JuegoDTO> resultados = juegoService.buscarPorGeneroYPresupuesto(categoria, maximo);
         return ResponseEntity.ok(resultados);
-    }
+    } */
     
     // http://localhost:8081/api/v1/juegos/ofertas
-    @GetMapping("/ofertas")
-    public ResponseEntity<List<JuegoDTO>> obtenerOfertas() {
-        List<JuegoDTO> resultados = juegoService.buscarOfertas();
-        if (resultados.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(resultados);
-    }
+
 }
