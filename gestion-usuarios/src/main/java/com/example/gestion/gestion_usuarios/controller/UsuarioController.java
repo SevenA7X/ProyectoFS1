@@ -1,41 +1,70 @@
 package com.example.gestion.gestion_usuarios.controller;
 
-import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
+import com.example.gestion.gestion_usuarios.model.Usuario;
 import com.example.gestion.gestion_usuarios.service.UsuarioService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/salas")
+@Tag(name = "Usuarios", description = "Sección para la gestión de usuarios")
 public class UsuarioController {
-    private final UsuarioService service;
+    @Autowired
+    private UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioService service) { this.service = service; }
-
-    @GetMapping // Obtener todos
-    public List<UsuarioDTO> listar() { return service.obtenerTodos(); }
-
-    @GetMapping("/{id}") // Obtener uno por ID
-    public ResponseEntity<UsuarioDTO> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.obtenerPorId(id));
+    @Schema
+    @RequestBody(description = "Usuario a registrar", required = true)
+    @Parameter(description = "id del usuario", required = true)
+    @GetMapping
+    @Operation(summary = "Obtener todos los usuarios", description = "Obtiene una lista de todos los usuarios")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrada")
+    })
+    @ApiResponse(responseCode = "200", description = "Operación exitosa",
+        content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation =
+    Usuario.class)))
+    public List<Usuario> getAllUsuarios() {
+        return usuarioService.findAll();
     }
 
-    @PostMapping // Crear (IE 2.2.1 Reglas de negocio)
-    public ResponseEntity<UsuarioDTO> crear(@Valid @RequestBody UsuarioDTO dto) {
-        return new ResponseEntity<>(service.crear(dto), HttpStatus.CREATED);
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener un usuario por su id", description = "Obtiene un usuario por su id")
+    public Usuario getUsuarioById(@PathVariable Integer id) {
+        return usuarioService.findById(id);
     }
 
-    @PutMapping("/{id}") // Actualizar
-    public ResponseEntity<UsuarioDTO> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioDTO dto) {
-        return ResponseEntity.ok(service.actualizar(id, dto));
+    @PostMapping
+    @Operation(summary = "Crear un nuevo usuario", description = "Crea una sala por su id")
+    public Usuario createUsuario(@RequestBody Usuario usuario) {
+        return usuarioService.save(usuario);
     }
 
-    @DeleteMapping("/{id}") // Eliminar
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un usuario", description = "Actualiza un usuario por su id")
+    public Usuario updateUsuario(@PathVariable Integer id, @RequestBody Usuario usuario) {
+        usuario.setId(id);
+        return usuarioService.save(usuario);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un usuario", description = "Elimina un usuario por su id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")})
+    public void deleteSala(@PathVariable Integer id) {
+        usuarioService.deleteById(id);
     }
 }
