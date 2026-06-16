@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UsuarioService {
+    
 
     private final UsuarioRepository repository;
 
@@ -29,7 +30,6 @@ public class UsuarioService {
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
-
 
     // 2. Método para obtener uno por ID
     public UsuarioDTO obtenerPorId(Long id) {
