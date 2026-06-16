@@ -4,10 +4,10 @@ import BibliotecaDigital.Compras.dto.ComprasDTO;
 import BibliotecaDigital.Compras.Modelo.Compra;
 import BibliotecaDigital.Compras.Repositorio.Repositorio;
 
-
 import BibliotecaDigital.Compras.client.UsuarioFeingClient;
 import BibliotecaDigital.Compras.client.CatalogoFeignClient;
 import BibliotecaDigital.Compras.client.PagosFeignClient;
+import BibliotecaDigital.Compras.client.LicenciasFeignClient; 
 import BibliotecaDigital.Compras.dto.JuegoValidacionDTO;
 import BibliotecaDigital.Compras.dto.PagosDTO;
 import BibliotecaDigital.Compras.dto.UsuarioDTO;
@@ -43,6 +43,10 @@ public class Servicio {
 
     @Autowired
     private PagosFeignClient pagoFeingClient;
+
+    // 🔌 Inyectamos el cliente para comunicarnos con el MS Licencias
+    @Autowired
+    private LicenciasFeignClient licenciasFeignClient;
 
     public List<ComprasDTO> findAll() {
         log.info("Capa Servicio Compras: Recuperando todos los registros");
@@ -124,8 +128,20 @@ public class Servicio {
         Compra entidad = convertirAEntidad(comprasDTO);
         Compra guardada = repositorio.save(entidad);
         
-        return convertirADTO(guardada);
+        if ("PROCESANDO".equalsIgnoreCase(guardada.getEstado_orden()) || 
+            "COMPLETADO".equalsIgnoreCase(guardada.getEstado_orden()) || 
+            "COMPLETADA".equalsIgnoreCase(guardada.getEstado_orden())) {
+            
+            try {
+                log.info("Capa Servicio Compras: ¡Orden aprobada! Notificando automáticamente al MS Licencias para la compra ID {}", guardada.getCompraID());         
+                licenciasFeignClient.generarLicenciaPorCompra(convertirADTO(guardada));       
+                log.info("Capa Servicio Compras: MS Licencias procesó la clave correctamente.");
+            } catch (Exception e) {
+                log.error("Capa Servicio Compras: No se pudo generar la licencia automática: {}", e.getMessage());
+            }
+        }
 
+        return convertirADTO(guardada);
     }
     
 

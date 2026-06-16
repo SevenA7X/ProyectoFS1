@@ -7,8 +7,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Slf4j
@@ -34,4 +37,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                              .body("Ocurrió un error interno en el servidor.");
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.BAD_REQUEST.value());
+    body.put("error", "Solicitud Incorrecta (Regla de Negocio)");
+    body.put("message", ex.getMessage());
+    
+    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+}
+
+
+@ExceptionHandler(ResponseStatusException.class)
+public ResponseEntity<Map<String, Object>> manejarErroresControlados(ResponseStatusException ex) {
+    Map<String, Object> respuesta = new HashMap<>();
+    
+    respuesta.put("timestamp", LocalDateTime.now());
+    respuesta.put("status", ex.getStatusCode().value());
+    respuesta.put("error", ex.getStatusCode().toString());
+    respuesta.put("message", ex.getReason()); 
+
+    return new ResponseEntity<>(respuesta, ex.getStatusCode());
+}
 }

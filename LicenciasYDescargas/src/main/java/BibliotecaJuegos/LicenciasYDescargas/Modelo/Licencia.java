@@ -25,4 +25,7 @@ public class Licencia {
 
     @Column(nullable=false)
     private LocalDate fecha;
+
+    @Column(nullable=false, unique=true)
+    private String codigoLicencia;
 }

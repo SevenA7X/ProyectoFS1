@@ -5,6 +5,8 @@ import BibliotecaJuegos.HistorialCompras.Repositorio.Repositorio;
 import BibliotecaJuegos.HistorialCompras.Servicio.Servicio;
 import BibliotecaJuegos.HistorialCompras.client.ComprasFeignClient;
 import BibliotecaJuegos.HistorialCompras.dto.CompraDTO;
+import BibliotecaJuegos.HistorialCompras.dto.HistorialComprasDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -19,6 +19,13 @@ public class Controlador {
     @Autowired
     private Servicio servicio;
 
+    @PostMapping("/generar")
+    public ResponseEntity<Void> generarLicenciaPorCompra(@RequestBody LicenciasYDescargasDTO dto) {
+    log.info("Controlador Licencias: Generando licencia para Usuario {} y Juego {}", dto.getUsuarioID(), dto.getVideojuegoID());
+    servicio.emitirLicenciaPorCompra(dto); 
+    return ResponseEntity.status(HttpStatus.CREATED).build();
+}
+
     @GetMapping
     public ResponseEntity<List<LicenciasYDescargasDTO>> listarLicencias() {
         log.info("Controlador Licencias: Petición GET recibida");
@@ -33,6 +40,15 @@ public class Controlador {
     public ResponseEntity<LicenciasYDescargasDTO> buscarLicencia(@PathVariable Long id) {
         log.info("Controlador Licencias: Petición GET para ID {}", id);
         return ResponseEntity.ok(servicio.findById(id));
+    }
+
+    @GetMapping("/usuario/{usuarioID}")
+    public ResponseEntity<List<LicenciasYDescargasDTO>> obtenerLicenciasPorUsuario(@PathVariable Long usuarioID) {
+        log.info("Capa Controlador Licencias: Solicitando licencias para el usuario ID {}", usuarioID);
+        
+        List<LicenciasYDescargasDTO> licencias = servicio.obtenerLicenciasPorUsuario(usuarioID);
+        
+        return ResponseEntity.ok(licencias);
     }
 
     @PostMapping

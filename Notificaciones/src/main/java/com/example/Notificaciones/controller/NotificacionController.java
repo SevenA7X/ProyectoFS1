@@ -1,32 +1,24 @@
 package com.example.Notificaciones.controller;
 
-import com.example.Notificaciones.modelo.NotificacionDTO;
-import com.example.Notificaciones.service.NotificacionService;
-import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import jakarta.validation.Valid;
+import com.example.Notificaciones.dto.NotificacionesDTO;
+import com.example.Notificaciones.service.NotificacionService;
 
 @RestController
-@RequestMapping("/api/notificaciones")
+@RequestMapping("/api/v1/notificaciones")
 public class NotificacionController {
 
-    private final NotificacionService service;
+    @Autowired
+    private NotificacionService notificacionService;
 
-    public NotificacionController(NotificacionService service) {
-        this.service = service;
-    }
-
-    @PostMapping("/enviar")
-    public ResponseEntity<String> enviar(@Valid @RequestBody NotificacionDTO dto) {
-        // IE 2.3.2: Aquí podrías agregar un log.info("Recibida petición para usuario {}", dto.getUsuarioId());
-        service.procesarNotificacion(dto);
-        return ResponseEntity.ok("Notificación enviada al usuario " + dto.getUsuarioId());
-    }
-
-    @GetMapping("/historial/{usuarioId}")
-    public List<NotificacionDTO> verHistorial(@PathVariable Long usuarioId) {
-        return service.obtenerPorUsuario(usuarioId);
+    @PostMapping
+    public ResponseEntity<NotificacionesDTO> enviar(@Valid @RequestBody NotificacionesDTO dto) {
+        NotificacionesDTO nuevaNotificacion = notificacionService.enviarNotificacion(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaNotificacion);
     }
 }
 
