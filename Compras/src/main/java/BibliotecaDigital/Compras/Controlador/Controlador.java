@@ -2,10 +2,14 @@ package BibliotecaDigital.Compras.Controlador;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import BibliotecaDigital.Compras.assemblers.CompraModelAssembler;
 import BibliotecaDigital.Compras.dto.ComprasDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,55 +28,71 @@ public class Controlador {
     @Autowired
     private Servicio servicio;
 
+    @Autowired
+    private CompraModelAssembler compraAssembler;
+
     @GetMapping
-    @Operation(summary = "Obtener todas las compras", description = "Obtiene una lista de todas las compras registradas")
+    @Operation(summary = "Obtener todas las compras", description = "Obtiene una lista de todas las compras registradas con navegación hipermedia (HATEOAS)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Operación Exitosa"),
-        @ApiResponse(responseCode = "204", description = "No hay datos en la BD"),
-        @ApiResponse(responseCode = "500", description = "El microservicio no esta iniciado, o hubo un error de conexion")
+        @ApiResponse(responseCode = "204", description = "No hay datos en la BD")
     })
-    public ResponseEntity<List<ComprasDTO>> listarCompras() {
+    public ResponseEntity<CollectionModel<EntityModel<ComprasDTO>>> listarCompras() {
         log.info("Controlador Compras: Petición GET recibida");
         List<ComprasDTO> lista = servicio.findAll();
+        
         if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(lista);
+
+        List<EntityModel<ComprasDTO>> comprasConLinks = lista.stream()
+                .map(compraAssembler::toModel)
+                .toList();
+
+        CollectionModel<EntityModel<ComprasDTO>> contenedorGlobal = CollectionModel.of(comprasConLinks,
+            WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(Controlador.class).listarCompras()).withSelfRel()
+        );
+
+        return ResponseEntity.ok(contenedorGlobal);
     }
 
     @GetMapping("/{compraID}")
-    @Operation(summary = "Obtener compra por ID", description = "Obtiene una compra segun su ID de compra")
+    @Operation(summary = "Obtener compra por ID", description = "Obtiene una compra según su ID de compra con navegación hipermedia (HATEOAS)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Operación Exitosa"),
-        @ApiResponse(responseCode = "404", description = "Compra no encontrada"),
-        @ApiResponse(responseCode = "500", description = "El microservicio no esta iniciado, o hubo un error de conexion")
+        @ApiResponse(responseCode = "404", description = "Compra no encontrada")
     })
-    public ResponseEntity<ComprasDTO> buscarCompra(@PathVariable Long compraID) {
+    public ResponseEntity<EntityModel<ComprasDTO>> buscarCompra(@PathVariable Long compraID) {
         log.info("Controlador Compras: Petición GET para ID {}", compraID);
+        
         ComprasDTO com = servicio.findById(compraID);
-        return ResponseEntity.ok(com);
+        
+        EntityModel<ComprasDTO> modeloConLinks = compraAssembler.toModel(com);
+        
+        return ResponseEntity.ok(modeloConLinks);
     }
-
+    
     @PostMapping
-    @Operation(summary = "Agregar compra", description = "Agrega una nueva compra")
-        @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Operación Exitosa"),
-        @ApiResponse(responseCode = "400", description = "Usuario invalido"),
-        @ApiResponse(responseCode = "500", description = "El microservicio no esta iniciado, o hubo un error de conexion")
+    @Operation(summary = "Agregar compra", description = "Agrega una nueva compra en el sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Compra registrada con éxito"),
+        @ApiResponse(responseCode = "400", description = "Datos de la compra inválidos")
     })
-    public ResponseEntity<ComprasDTO> agregarCompra(@Valid @RequestBody ComprasDTO ComprasDTO) {
-        log.info("Controlador Compras: Petición POST recibida");
-        ComprasDTO nuevaCompra = servicio.save(ComprasDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCompra);
-    }
+    public ResponseEntity<EntityModel<ComprasDTO>> agregarCompra(@Valid @RequestBody ComprasDTO comprasDTO) {
+    log.info("Controlador Compras: Petición POST recibida");
+    ComprasDTO nuevaCompra = servicio.save(comprasDTO);
+    
+    EntityModel<ComprasDTO> modeloConLinks = compraAssembler.toModel(nuevaCompra);
+    
+    return ResponseEntity.status(HttpStatus.CREATED).body(modeloConLinks);
+}
 
     @PutMapping("/{compraID}")
-    @Operation(summary = "Modificar compra", description = "Modifica una compra registrada")
-        @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Operación Exitosa"),
-        @ApiResponse(responseCode = "400", description = "Usuario invalido"),
-        @ApiResponse(responseCode = "404", description = "Compra no encontrada para modificar"),
-        @ApiResponse(responseCode = "500", description = "El microservicio no esta iniciado, o hubo un error de conexion")
+    @Operation(summary = "Modificar compra", description = "Modifica los datos de una compra registrada existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Compra modificada con éxito"),
+        @ApiResponse(responseCode = "400", description = "Datos de modificación inválidos"),
+        @ApiResponse(responseCode = "404", description = "Compra no encontrada para modificar")
     })
     public ResponseEntity<ComprasDTO> modificarCompra(@PathVariable Long compraID, @Valid @RequestBody ComprasDTO ComprasDTO) {
         log.info("Controlador Compras: Petición PUT para ID {}", compraID);
@@ -82,11 +102,10 @@ public class Controlador {
     }
 
     @DeleteMapping("/{compraID}")
-    @Operation(summary = "Eliminar compra", description = "Elimina una compra registrada")
-     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Operación Exitosa"),
-        @ApiResponse(responseCode = "404", description = "Compra no encontrada"),
-        @ApiResponse(responseCode = "500", description = "El microservicio no esta iniciado, o hubo un error de conexion")
+    @Operation(summary = "Eliminar compra", description = "Elimina de forma permanente una compra registrada")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Compra eliminada con éxito (Sin contenido)"),
+        @ApiResponse(responseCode = "404", description = "Compra no encontrada")
     })
     public ResponseEntity<Void> eliminarCompra(@PathVariable Long compraID) {
         log.info("Controlador Compras: Petición DELETE para ID {}", compraID);
