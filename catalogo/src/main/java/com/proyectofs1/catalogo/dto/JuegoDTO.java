@@ -1,4 +1,5 @@
 package com.proyectofs1.catalogo.dto;
+import org.springframework.hateoas.RepresentationModel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class JuegoDTO {
+public class JuegoDTO extends RepresentationModel<JuegoDTO> {
     private Long id;
 
     @NotBlank(message = "El título no puede estar vacío")

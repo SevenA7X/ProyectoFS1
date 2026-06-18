@@ -91,15 +91,6 @@ CREATE DATABASE estadisticas_uso_db;
    * **Nota importante:** Se recomienda iniciar primero el microservicio de **Catálogo**, ya que los demás componentes realizan validaciones de integridad contra él.
 
 ### Paso 3: Documentación y Pruebas (Swagger UI)
-Acceda a la documentación interactiva de cada servicio mediante las siguientes URLs:
+Acceda a la documentación interactiva de cada servicio mediante las siguiente URL:
 
-* **Catálogo:** `http://localhost:8081/swagger-ui/index.html`
-* **Reseñas:** `http://localhost:8082/swagger-ui/index.html`
-* **Moderación:** `http://localhost:8083/swagger-ui/index.html`
-* **Pagos:** `http://localhost:8084/swagger-ui/index.html`
-* **Compras:** `http://localhost:8085/swagger-ui/index.html`
-* **Historial:** `http://localhost:8086/swagger-ui/index.html`
-* **Licencias:** `http://localhost:8087/swagger-ui/index.html`
-* **Usuarios:** `http://localhost:8088/swagger-ui/index.html`
-* **Notificaciones:** `http://localhost:8089/swagger-ui/index.html`
-* **Estadísticas:** `http://localhost:8090/swagger-ui/index.html`
+* **Swagger todos los microservicios unificados:** `http://localhost:8080/webjars/swagger-ui/index.html`
