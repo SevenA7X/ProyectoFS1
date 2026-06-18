@@ -4,7 +4,6 @@ import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.model.Usuario;
 import com.example.gestion.gestion_usuarios.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -19,25 +18,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/salas")
+@RequestMapping("/api/usuarios")
 @Tag(name = "Usuarios", description = "Sección para la gestión de usuarios")
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Schema
-    @RequestBody(description = "Usuario a registrar", required = true)
-    @Parameter(description = "id del usuario", required = true)
     @GetMapping
     @Operation(summary = "Obtener todos los usuarios", description = "Obtiene una lista de todos los usuarios")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Operación exitosa"),
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrada")
-    })
-    @ApiResponse(responseCode = "200", description = "Operación exitosa",
+        @ApiResponse(responseCode = "200", description = "Operación exitosa",
+        
         content = @Content(mediaType = "application/json",
         schema = @Schema(implementation =
-    Usuario.class)))
+    Usuario.class)))})
     public List<UsuarioDTO> getAllUsuarios() {
         return usuarioService.obtenerTodos();
     }

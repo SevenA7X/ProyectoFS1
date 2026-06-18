@@ -1,7 +1,6 @@
 package com.example.service;
 
 import com.example.gestion.gestion_usuarios.model.Usuario;
-import com.example.controller.MockBean;
 import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.repository.UsuarioRepository;
 import com.example.gestion.gestion_usuarios.service.UsuarioService;
@@ -12,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,7 @@ public class UsuarioServiceTest {
     @Autowired
     private UsuarioService usuarioService;
 
-    @MockBean
+    @MockitoBean
     private UsuarioRepository usuarioRepository;
 
     @Test
