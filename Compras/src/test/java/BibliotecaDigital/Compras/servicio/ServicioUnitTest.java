@@ -72,7 +72,7 @@ public class ServicioUnitTest {
 
 
         compraEntidadGuardada = new Compra();
-        compraEntidadGuardada.setCompraID(555L); // Genera ID simulado
+        compraEntidadGuardada.setCompraID(555L); 
         compraEntidadGuardada.setUsuarioID(1L);
         compraEntidadGuardada.setVideojuegoID(100L);
         compraEntidadGuardada.setEstado_orden("COMPLETADA");
@@ -118,11 +118,11 @@ public class ServicioUnitTest {
         // ==========================================
         // GIVEN
         // ==========================================
-        usuarioComprador.setRol("MODERADOR"); // Cambiamos el rol para disparar el error
+        usuarioComprador.setRol("MODERADOR"); 
         Mockito.when(usuarioFeignClient.obtenerUsuarioPorId(1L)).thenReturn(usuarioComprador);
 
         // ==========================================
-        // WHEN & THEN (Se espera un IllegalArgumentException)
+        // WHEN & THEN
         // ==========================================
         IllegalArgumentException excepcion = assertThrows(IllegalArgumentException.class, () -> {
             servicio.save(comprasDTO);
@@ -130,7 +130,6 @@ public class ServicioUnitTest {
 
         assertEquals("No se puede procesar la compra: Los moderadores no están autorizados a comprar.", excepcion.getMessage());
         
-        // Verificación de aislamiento: El flujo se detuvo, jamás llamó al catálogo ni guardó en base de datos
         Mockito.verifyNoInteractions(catalogoFeignClient);
         Mockito.verifyNoInteractions(repositorio);
     }
