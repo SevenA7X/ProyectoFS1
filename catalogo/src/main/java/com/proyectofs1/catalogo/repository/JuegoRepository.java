@@ -25,7 +25,5 @@ public interface JuegoRepository extends JpaRepository<Juego, Long> {
     @Query("SELECT j FROM Juego j WHERE j.categoria.nombre = :genero AND j.precio <= :precioMaximo")
     List<Juego> buscarPorGeneroYPrecioMaximo(@Param("genero") String genero, @Param("precioMaximo") double precioMaximo);
 
-    // 5. Consulta SQL Nativa (Se mantiene igual ya que apunta a la tabla física)
-    @Query(value = "SELECT * FROM videojuego ORDER BY precio ASC LIMIT 3", nativeQuery = true)
-    List<Juego> buscarTop3OfertasNativo();
+    
 }

@@ -128,8 +128,7 @@ public class Servicio {
         Compra entidad = convertirAEntidad(comprasDTO);
         Compra guardada = repositorio.save(entidad);
         
-        if ("PROCESANDO".equalsIgnoreCase(guardada.getEstado_orden()) || 
-            "COMPLETADO".equalsIgnoreCase(guardada.getEstado_orden()) || 
+        if ("COMPLETADO".equalsIgnoreCase(guardada.getEstado_orden()) || 
             "COMPLETADA".equalsIgnoreCase(guardada.getEstado_orden())) {
             
             try {

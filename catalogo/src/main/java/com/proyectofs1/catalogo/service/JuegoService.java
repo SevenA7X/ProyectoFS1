@@ -77,19 +77,14 @@ public class JuegoService {
                 .collect(Collectors.toList());
     }
 
-    public List<JuegoDTO> buscarPorGeneroYPresupuesto(String genero, double precioMaximo) {
+    /* public List<JuegoDTO> buscarPorGeneroYPresupuesto(String genero, double precioMaximo) {
         log.info("Buscando juegos filtrados por género '{}' y presupuesto máximo '{}'", genero, precioMaximo);
         return juegoRepository.buscarPorGeneroYPrecioMaximo(genero, precioMaximo).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-    }
+    } */
     
-    public List<JuegoDTO> buscarOfertas() {
-        log.info("Consultando las top 3 mejores ofertas (Query Nativo).");
-        return juegoRepository.buscarTop3OfertasNativo().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+    
 
     // --- Métodos Privados de Mapeo ---
     
