@@ -1,5 +1,7 @@
 package com.example.gestion.gestion_usuarios.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.model.Usuario;
 import com.example.gestion.gestion_usuarios.service.UsuarioService;
@@ -12,13 +14,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/v1/usuarios")
+@CrossOrigin(origins = "*")
 @Tag(name = "Usuarios", description = "Sección para la gestión de usuarios")
 public class UsuarioController {
     @Autowired

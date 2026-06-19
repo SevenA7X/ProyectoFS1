@@ -77,6 +77,7 @@ public class UsuarioService {
         dto.setId(usuario.getId());
         dto.setNombreUsuario(usuario.getNombreUsuario());
         dto.setEmail(usuario.getEmail());
+        dto.setPassword(usuario.getPassword());
         dto.setRol(usuario.getRol());
         return dto;
     }

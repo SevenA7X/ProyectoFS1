@@ -1,4 +1,4 @@
-package com.example.controller;
+package com.example.gestion.gestion_usuarios.controller;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -7,15 +7,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import com.example.gestion.gestion_usuarios.controller.UsuarioController;
 import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.service.UsuarioService;
 
@@ -25,7 +24,7 @@ public class UsuarioControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private UsuarioService usuarioService;
 
     @Autowired
