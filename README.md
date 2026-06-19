@@ -74,6 +74,10 @@ Ejecute el siguiente *script* en su cliente MySQL para crear los esquemas indepe
 
 ```sql
 CREATE DATABASE catalogo_db;
+CREATE DATABASE resena_db;
+CREATE DATABASE gestion_usuarios_db;
+CREATE DATABASE estadisticas_uso_db;
+CREATE DATABASE notificaciones_db;
 CREATE DATABASE resenas_db;
 CREATE DATABASE moderacion_db;
 CREATE DATABASE db_pagos;
@@ -91,6 +95,16 @@ CREATE DATABASE estadisticas_uso_db;
    * **Nota importante:** Se recomienda iniciar primero el microservicio de **Catálogo**, ya que los demás componentes realizan validaciones de integridad contra él.
 
 ### Paso 3: Documentación y Pruebas (Swagger UI)
-Acceda a la documentación interactiva de cada servicio mediante las siguiente URL:
+Acceda a la documentación interactiva de cada servicio mediante las siguientes URLs:
 
-* **Swagger todos los microservicios unificados:** `http://localhost:8080/webjars/swagger-ui/index.html`
+* **Catálogo:** `http://localhost:8081/swagger-ui/index.html`
+* **Reseñas:** `http://localhost:8082/swagger-ui/index.html`
+* **Moderación:** `http://localhost:8083/swagger-ui/index.html`
+* **Pagos:** `http://localhost:8084/swagger-ui/index.html`
+* **Compras:** `http://localhost:8085/swagger-ui/index.html`
+* **Historial:** `http://localhost:8086/swagger-ui/index.html`
+* **Licencias:** `http://localhost:8087/swagger-ui/index.html`
+* **Usuarios:** `http://localhost:8088/swagger-ui/index.html`
+* **Notificaciones:** `http://localhost:8089/swagger-ui/index.html`
+* **Estadísticas:** `http://localhost:8090/swagger-ui/index.html`
+
