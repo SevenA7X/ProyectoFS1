@@ -44,7 +44,7 @@ public class UsuarioControllerTest {
 
     @Test
     public void testGetAllUsuarios() throws Exception {
-        // CORREGIDO: Nombre del método del servicio y retorno de DTO
+        // Nombre del método del servicio y retorno de DTO
         when(usuarioService.obtenerTodos()).thenReturn(List.of(usuarioDTO));
 
         mockMvc.perform(get("/api/usuarios"))
@@ -55,7 +55,7 @@ public class UsuarioControllerTest {
 
     @Test
     public void testGetUsuarioById() throws Exception {
-        // CORREGIDO: Nombre del método del servicio
+        // Nombre del método del servicio
         when(usuarioService.obtenerPorId(1L)).thenReturn(usuarioDTO);
 
         mockMvc.perform(get("/api/usuarios/1"))
@@ -66,7 +66,7 @@ public class UsuarioControllerTest {
 
     @Test
     public void testCreateUsuario() throws Exception {
-        // CORREGIDO: Nombre del método crear()
+        // Nombre del método crear()
         when(usuarioService.crear(any(UsuarioDTO.class))).thenReturn(usuarioDTO);
 
         mockMvc.perform(post("/api/usuarios")
@@ -79,7 +79,7 @@ public class UsuarioControllerTest {
 
     @Test
     public void testUpdateUsuario() throws Exception {
-        // CORREGIDO: Nombre del método actualizar()
+        // Nombre del método actualizar()
         when(usuarioService.actualizar(eq(1L), any(UsuarioDTO.class))).thenReturn(usuarioDTO);
 
         mockMvc.perform(put("/api/usuarios/1")
@@ -92,7 +92,7 @@ public class UsuarioControllerTest {
 
     @Test
     public void testDeleteUsuario() throws Exception {
-        // CORREGIDO: Nombre del método eliminar() y tipo Long
+        // Nombre del método eliminar() y tipo Long
         doNothing().when(usuarioService).eliminar(1L);
 
         mockMvc.perform(delete("/api/usuarios/1"))

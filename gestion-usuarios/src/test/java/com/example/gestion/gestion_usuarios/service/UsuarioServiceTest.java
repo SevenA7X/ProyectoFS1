@@ -4,59 +4,82 @@ import com.example.gestion.gestion_usuarios.model.Usuario;
 import com.example.gestion.gestion_usuarios.dto.UsuarioDTO;
 import com.example.gestion.gestion_usuarios.repository.UsuarioRepository;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+// Habilita el uso de Mockito puro sin levantar el contexto pesado de Spring Boot
+@ExtendWith(MockitoExtension.class)
+class UsuarioServiceTest {
 
-
-@SpringBootTest
-public class UsuarioServiceTest {
-
-    @Autowired
-    private UsuarioService usuarioService;
-
+    // 1. Aislamos la dependencia (La Base de Datos / Repositorio)
     @Mock
     private UsuarioRepository usuarioRepository;
 
+    // 2. Inyectamos de forma automática los mocks en el servicio bajo prueba
+    @InjectMocks
+    private UsuarioService usuarioService;
+
     @Test
-    public void testFindAll() {
-        // CORREGIDO: Constructor limpio con comillas dobles y tipos correctos
+    void obtenerTodos_DeberiaRetornarListaVacia_CuandoNoHayUsuarios() {
+        // --- GIVEN ---
+        when(usuarioRepository.findAll()).thenReturn(Collections.emptyList());
+
+        // --- WHEN ---
+        List<UsuarioDTO> resultado = usuarioService.obtenerTodos();
+
+        // --- THEN ---
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
+        verify(usuarioRepository, times(1)).findAll();
+    }
+
+    @Test
+    void obtenerTodos_DeberiaRetornarListaDeUsuariosDTO_CuandoExistenUsuarios() {
+        // --- GIVEN ---
         Usuario usuario = new Usuario(1L, "Juan Pérez", "juanperez@gmail.com", "123456", "CLIENTE");
-        
         when(usuarioRepository.findAll()).thenReturn(List.of(usuario));
 
-        // CORREGIDO: El servicio retorna una lista de UsuarioDTO
-        List<UsuarioDTO> usuarios = usuarioService.obtenerTodos();
-        
-        assertNotNull(usuarios);
-        assertEquals(1, usuarios.size());
+        // --- WHEN ---
+        List<UsuarioDTO> resultado = usuarioService.obtenerTodos();
+
+        // --- THEN ---
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals("Juan Pérez", resultado.get(0).getNombreUsuario());
+        verify(usuarioRepository, times(1)).findAll();
     }
 
     @Test
-    public void testFindById() {
-        Long id = 1L; // CORREGIDO: De Integer a Long
-        Usuario usuario = new Usuario(1L, "Juan Pérez", "juanperez@gmail.com", "123456", "CLIENTE");
-        
-        when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
+    void obtenerPorId_DeberiaRetornarUsuarioDTO_CuandoIdExiste() {
+        // --- GIVEN ---
+        Long idBuscado = 1L;
+        Usuario usuarioSimulado = new Usuario(idBuscado, "Juan Pérez", "juanperez@gmail.com", "123456", "CLIENTE");
+        when(usuarioRepository.findById(idBuscado)).thenReturn(Optional.of(usuarioSimulado));
 
-        // CORREGIDO: Método correcto del servicio
-        UsuarioDTO found = usuarioService.obtenerPorId(id);
-        
-        assertNotNull(found);
-        assertEquals(id, found.getId());
+        // --- WHEN ---
+        UsuarioDTO resultado = usuarioService.obtenerPorId(idBuscado);
+
+        // --- THEN ---
+        assertNotNull(resultado);
+        assertEquals(idBuscado, resultado.getId());
+        assertEquals("Juan Pérez", resultado.getNombreUsuario()); 
+        verify(usuarioRepository, times(1)).findById(idBuscado);
     }
 
     @Test
-    public void testSave() {
-        // El método crear() del servicio espera y retorna un UsuarioDTO
+    void crear_DeberiaGuardarYRetornarUsuarioDTO_CuandoDtoEsValido() {
+        // --- GIVEN ---
         UsuarioDTO dtoInput = new UsuarioDTO();
         dtoInput.setNombreUsuario("Juan Pérez");
         dtoInput.setEmail("juanperez@gmail.com");
@@ -64,25 +87,30 @@ public class UsuarioServiceTest {
         dtoInput.setRol("CLIENTE");
 
         Usuario usuarioGuardado = new Usuario(1L, "Juan Pérez", "juanperez@gmail.com", "123456", "CLIENTE");
-        
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioGuardado);
 
-        // CORREGIDO: Llamada al método correcto pasándole el DTO
-        UsuarioDTO saved = usuarioService.crear(dtoInput);
-        
-        assertNotNull(saved);
-        assertEquals("Juan Pérez", saved.getNombreUsuario());
+        // --- WHEN ---
+        UsuarioDTO resultado = usuarioService.crear(dtoInput);
+
+        // --- THEN ---
+        assertNotNull(resultado);
+        assertEquals(1L, resultado.getId());
+        assertEquals("Juan Pérez", resultado.getNombreUsuario());
+        verify(usuarioRepository, times(1)).save(any(Usuario.class));
     }
 
     @Test
-    public void testDeleteById() {
-        Long id = 1L; // CORREGIDO: De Integer a Long
-        
-        doNothing().when(usuarioRepository).deleteById(id);
+    void eliminar_DeberiaInvocarDelete_CuandoIdExiste() {
+        // --- GIVEN ---
+        Long idEliminar = 1L;
+        when(usuarioRepository.existsById(idEliminar)).thenReturn(true);
+        doNothing().when(usuarioRepository).deleteById(idEliminar);
 
-        // CORREGIDO: Método correcto del servicio
-        usuarioService.eliminar(id);
-        
-        verify(usuarioRepository, times(1)).deleteById(id);
+        // --- WHEN ---
+        usuarioService.eliminar(idEliminar);
+
+        // --- THEN ---
+        verify(usuarioRepository, times(1)).existsById(idEliminar);
+        verify(usuarioRepository, times(1)).deleteById(idEliminar);
     }
 }
